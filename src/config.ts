@@ -2,7 +2,7 @@ export default {
   // 网站标题
   Title: 'Chow的技术博客',
   // 网站地址
-  Site: 'https://yaozhenyuanblog.cn',
+  Site: 'https://bigtigeryk.github.io',
   // 网站副标题
   Subtitle: '记录学习，分享技术.',
   // 网站描述
