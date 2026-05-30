@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:yaozhenyuanblog.cn)",
+      "Bash(curl -sL --max-time 15 \"https://yaozhenyuanblog.cn/article/astro-blog-setup/\")",
+      "Bash(pnpm dev *)",
+      "Bash(curl -s http://localhost:4321)",
+      "Bash(git push *)",
+      "Bash(curl -sL --max-time 15 \"https://bigtigeryk.github.io/blog/\")",
+      "Bash(curl *)",
+      "Bash(pnpm build *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

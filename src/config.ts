@@ -62,6 +62,11 @@ export default {
     asideAD_Slot: '',
     articleAD_Slot: ''
   },
+  // 文章内赞赏码（不填不开启）
+  Reward: {
+    AliPay: '',
+    WeChat: ''
+  },
   // 评论组件（只允许同时开启一个）
   Comment: {
     Twikoo: {
