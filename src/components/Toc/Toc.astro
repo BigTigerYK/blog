@@ -1,0 +1,24 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+const { headings } = Astro.props as { headings: Heading[] };
+// 只显示 h2 和 h3
+const tocHeadings = headings.filter((h: Heading) => h.depth === 2 || h.depth === 3);
+import "./Toc.less";
+---
+
+<nav class="vh-toc" aria-label="文章目录">
+  <h4 class="vh-toc-title">目录</h4>
+  <ul class="vh-toc-list">
+    {tocHeadings.map((h: Heading) => (
+      <li class={`vh-toc-item${h.depth === 3 ? ' vh-toc-item-sub' : ''}`}>
+        <a href={`#${h.slug}`} class="vh-toc-link" data-heading-id={h.slug}>
+          {h.text}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

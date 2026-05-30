@@ -13,7 +13,11 @@
       "Bash(git commit *)",
       "Bash(git config *)",
       "Bash(git remote *)",
-      "Bash(GIT_SSL_NO_VERIFY=1 git push)"
+      "Bash(GIT_SSL_NO_VERIFY=1 git push)",
+      "Bash(git checkout *)",
+      "Bash(npm run *)",
+      "Bash(pnpm add *)",
+      "Bash(npx astro *)"
     ]
   }
 }

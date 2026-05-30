@@ -27,13 +27,157 @@ main.main {
       height: max-content;
       overflow: hidden;
     }
+
+    // 三栏布局（文章页）
+    &.main-inner-article {
+      display: grid;
+      grid-template-columns: var(--vh-aside-width) minmax(0, 1fr) 240px;
+      gap: 0;
+
+      &>.main-inner-content {
+        // 黄金阅读宽度居中
+        max-width: var(--vh-golden-width);
+        margin: 0 auto;
+        padding: 0.88rem 1.2rem;
+      }
+
+      &>.main-toc {
+        position: sticky;
+        top: calc(66px + 1.5rem);
+        height: fit-content;
+        max-height: calc(100vh - 66px - 3rem);
+        overflow-y: auto;
+        padding: 0.88rem 0.66rem;
+        box-sizing: border-box;
+      }
+    }
   }
 }
 
-@media screen and (max-width: 888px) {
+// TOC 移动端浮动按钮
+.vh-toc-fab {
+  display: none;
+  position: fixed;
+  right: 1rem;
+  bottom: 5rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  background-color: var(--vh-bg-card);
+  border: 1px solid var(--vh-border-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 8;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: var(--vh-font-color);
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &:hover {
+    border-color: var(--vh-accent-color);
+    box-shadow: 0 0 12px var(--vh-glow-purple);
+  }
+
+  svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+}
+
+// TOC 移动端抽屉
+.vh-toc-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.vh-toc-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 75vw;
+  max-width: 320px;
+  height: 100vh;
+  background-color: var(--vh-bg-card);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 11;
+  overflow-y: auto;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+  padding: 1.5rem;
+
+  &.active {
+    transform: translateX(0);
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.88rem;
+    border-bottom: 1px solid var(--vh-border-color);
+
+    h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--vh-font-color);
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: var(--vh-text-secondary);
+      cursor: pointer;
+      font-size: 1.25rem;
+      padding: 0.25rem;
+      transition: color 0.2s;
+
+      &:hover {
+        color: var(--vh-font-color);
+      }
+    }
+  }
+
+  &-content {
+    .vh-toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
   main.main {
     &>.main-inner {
       flex-direction: column;
+
+      &.main-inner-article {
+        display: flex;
+        flex-direction: column;
+
+        &>.main-toc {
+          display: none;
+        }
+      }
     }
+  }
+
+  .vh-toc-fab {
+    display: flex;
   }
 }

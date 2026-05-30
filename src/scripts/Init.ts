@@ -39,6 +39,8 @@ import HanAnalyticsInit from "@/scripts/HanAnalytics";
 import SeoPushInit from "@/scripts/SeoPush";
 // SmoothScroll 滚动优化
 import SmoothScroll from "@/scripts/Smoothscroll";
+// TOC 动态高亮
+import { tocInit, tocDestroy } from "@/scripts/Toc";
 
 // ============================================================
 
@@ -89,6 +91,8 @@ const indexInit = async (only: boolean = true) => {
   vhSearchInit();
   // 移动端侧边栏初始化
   initMobileSidebar();
+  // TOC 动态高亮
+  tocInit();
 };
 
 export default () => {
@@ -107,6 +111,8 @@ export default () => {
     // 销毁音乐
     MusicList.forEach((i: any) => i.destroy());
     MusicList.length = 0;
+    // 销毁 TOC observer
+    tocDestroy();
   });
   console.log("%c🌻 程序：Astro | 主题：vhAstro-Theme | 作者：Han | Github：https://github.com/uxiaohan/vhAstro-Theme 🌻", "color:#fff; background: linear-gradient(270deg, #18d7d3, #68b7dd, #8695e6, #986fee); padding: 8px 15px; border-radius: 8px");
   console.log("%c\u521D\u59CB\u5316\u5B8C\u6BD5.", "color: #ffffff; background: #000; padding:5px");

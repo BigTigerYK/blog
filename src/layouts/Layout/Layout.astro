@@ -1,9 +1,11 @@
 ---
-const { title, keywords, description, pagecover, activeNav, Home } = Astro.props;
+const { title, keywords, description, pagecover, activeNav, Home, articleLayout, headings } = Astro.props;
 // 网站配置
 import SITE_INFO from "@/config";
 const { GoogleAds, Theme, HomeBanner } = SITE_INFO;
 const { ad_Client, asideAD_Slot, articleAD_Slot } = GoogleAds;
+// View Transitions
+import { ViewTransitions } from "astro:transitions";
 // Head 依赖
 import Head from "@/components/Head/Head.astro";
 // 顶部 Header
@@ -18,6 +20,8 @@ import Footer from "@/components/Footer/Footer.astro";
 import BackTop from "@/components/BackTop/BackTop.astro";
 // 手机端侧边栏
 import MobileSidebar from "@/components/MobileSidebar/MobileSidebar.astro";
+// TOC 组件
+import Toc from "@/components/Toc/Toc.astro";
 // A Modern CSS Reset
 import "@/styles/Reset.less";
 // 全局基础样式
@@ -28,6 +32,7 @@ import "./Layout.less";
 
 <html lang="zh-CN">
 	<Head Title={title} Keywords={keywords} Description={description} PageCover={pagecover}>
+		<ViewTransitions />
 		<!-- 谷歌广告JS加载项 -->
 		{ad_Client && (asideAD_Slot || articleAD_Slot) && <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ad_Client}`} crossorigin="anonymous" />}
 		<!-- 彩旗🎈 -->
@@ -42,21 +47,79 @@ import "./Layout.less";
 	<body>
 		<MobileSidebar />
 		<Header activeNav={activeNav} />
+		<!-- 阅读进度条（仅文章页） -->
+		{articleLayout && <div class="vh-reading-progress" id="readingProgress"></div>}
 		<main class="main">
 			{HomeBanner.enable && <MainHeader />}
-			<section class="main-inner" style={`padding-top:${HomeBanner.enable ? "0.88rem" : "calc(66px + 0.68rem)"}`}>
+			<section class={`main-inner${articleLayout ? ' main-inner-article' : ''}`} style={`padding-top:${HomeBanner.enable ? "0.88rem" : "calc(66px + 0.68rem)"}`}>
 				<section class="main-inner-content">
 					<slot />
 				</section>
 				<Aside />
+				{articleLayout && headings && headings.length > 0 && (
+					<aside class="main-toc">
+						<Toc headings={headings} />
+					</aside>
+				)}
 			</section>
 			<BackTop />
 		</main>
 		<Footer />
+		<!-- TOC 移动端抽屉 -->
+		{articleLayout && headings && headings.length > 0 && (
+			<>
+				<button class="vh-toc-fab" aria-label="打开目录" id="tocFab">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+						<path d="M4 6h16" />
+						<path d="M4 12h16" />
+						<path d="M4 18h16" />
+					</svg>
+				</button>
+				<div class="vh-toc-drawer-overlay" id="tocDrawerOverlay"></div>
+				<nav class="vh-toc-drawer" id="tocDrawer">
+					<div class="vh-toc-drawer-header">
+						<h4>目录</h4>
+						<button id="tocDrawerClose" aria-label="关闭目录">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+								<path d="M18 6l-12 12" />
+								<path d="M6 6l12 12" />
+							</svg>
+						</button>
+					</div>
+					<div class="vh-toc-drawer-content">
+						<Toc headings={headings} />
+					</div>
+				</nav>
+			</>
+		)}
 		<script>
 			import InitFn from "@/scripts/Init";
 			// 全局初始化
 			InitFn();
 		</script>
+		<!-- TOC 抽屉交互 -->
+		{articleLayout && headings && headings.length > 0 && (
+			<script>
+				const fab = document.getElementById('tocFab');
+				const drawer = document.getElementById('tocDrawer');
+				const overlay = document.getElementById('tocDrawerOverlay');
+				const closeBtn = document.getElementById('tocDrawerClose');
+
+				function openDrawer() {
+					drawer?.classList.add('active');
+					overlay?.classList.add('active');
+				}
+				function closeDrawer() {
+					drawer?.classList.remove('active');
+					overlay?.classList.remove('active');
+				}
+
+				fab?.addEventListener('click', openDrawer);
+				overlay?.addEventListener('click', closeDrawer);
+				closeBtn?.addEventListener('click', closeDrawer);
+			</script>
+		)}
 	</body>
 </html>

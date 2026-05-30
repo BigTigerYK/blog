@@ -12,6 +12,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeKatex from "rehype-katex";
 import remarkDirective from "remark-directive";
 import { remarkNote, addClassNames } from './src/plugins/markdown.custom'
+import { lineHighlightTransformer } from './src/plugins/shiki-line-highlight'
 // Markdown 配置================
 import SITE_INFO from './src/config';
 import swup from '@swup/astro';
@@ -50,7 +51,10 @@ export default defineConfig({
 			}
 		], rehypeSlug, addClassNames],
 		syntaxHighlight: 'shiki',
-		shikiConfig: { theme: 'github-light' },
+		shikiConfig: {
+			theme: 'github-dark',
+			transformers: [lineHighlightTransformer()]
+		},
 	},
 	vite: { resolve: { alias: { "@": path.resolve(__dirname, "./src") } } },
 	server: { host: '0.0.0.0' }

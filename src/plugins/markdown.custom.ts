@@ -40,7 +40,9 @@ const remarkNote = () => {
 
 //  处理 HTML 标签
 const addClassNames = () => {
-  return (tree: any) => {
+  return (tree: any, file: any) => {
+    const headings: { depth: number; slug: string; text: string }[] = [];
+
     visit(tree, (node, index, parent) => {
       // 处理 a 标签
       if (node.tagName === 'a') {
@@ -48,7 +50,9 @@ const addClassNames = () => {
         node.children = [{ type: 'element', tagName: 'span', children: node.children || [] }];
         // 处理 pre 标签
       } else if (node.tagName === 'pre') {
-        const divNode = { type: 'element', tagName: 'section', properties: { class: 'vh-code-box' }, children: [{ type: 'element', tagName: 'span', properties: { class: 'vh-code-copy' } }, node] };
+        // 创建代码块容器（语言标签由 Shiki transformer 后续添加）
+        const langSpan = { type: 'element', tagName: 'span', properties: { class: 'vh-code-lang' }, children: [{ type: 'text', value: '' }] };
+        const divNode = { type: 'element', tagName: 'section', properties: { class: 'vh-code-box' }, children: [langSpan, { type: 'element', tagName: 'span', properties: { class: 'vh-code-copy' } }, node] };
         // 替换父节点的 children 中的 pre 节点为新的 div 节点
         if (parent && index !== null) parent.children.splice(index, 1, divNode);
         // 处理 img 标签
@@ -63,9 +67,22 @@ const addClassNames = () => {
           node.children = [{ type: 'element', tagName: 'section', properties: { class: 'vh-space-loading' }, children: [{ type: 'element', tagName: 'span' }, { type: 'element', tagName: 'span' }, { type: 'element', tagName: 'span' }] }];
         }
       }
+
+      // 提取 h2/h3 headings
+      if (node.tagName === 'h2' || node.tagName === 'h3') {
+        const id = node.properties?.id;
+        if (id) {
+          const text = toString(node);
+          headings.push({ depth: node.tagName === 'h2' ? 2 : 3, slug: id, text });
+        }
+      }
     });
 
+    // 写入 frontmatter
+    if (file.data?.astro?.frontmatter) {
+      file.data.astro.frontmatter.headings = headings;
+    }
   };
 }
 
-export { remarkNote, addClassNames } 
+export { remarkNote, addClassNames }

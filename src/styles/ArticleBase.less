@@ -13,6 +13,8 @@
       box-sizing: border-box;
       margin: 1.666rem 0 0.36rem;
       font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       width: 100%;
       max-width: 100%;
       word-break: break-all;
@@ -64,7 +66,7 @@
     ol:not(.vh-vhMusic ol, .vh-comment ol) {
       padding: 0.618rem 0;
       font-size: 0.9375rem;
-      line-height: 1.6;
+      line-height: 1.75;
 
       li {
         color: var(--vh-font-66);
@@ -85,9 +87,11 @@
 
       // 其下面的code标签样式
       code {
-        background-color: var(--vh-font-16);
+        background-color: #21262D;
         padding: .125rem .375rem;
         font-size: 0.8125rem;
+        color: #D2A8FF;
+        border-radius: 0.25rem;
       }
     }
 
@@ -102,15 +106,17 @@
 
     blockquote {
       margin: 1rem 0 1.618rem;
-      padding: 0 0.88rem;
-      border-left: 0.288rem solid #49b1f5;
-      background-color: rgba(73, 177, 245, 0.1);
-      border-radius: 0.618rem;
+      padding: 0.75rem 1rem;
+      border-left: 4px solid var(--vh-accent-color, #8B5CF6);
+      background-color: var(--vh-bg-card, #161B22);
+      border-radius: 0.5rem;
 
       &>p {
+        margin: 0;
         font-size: 0.875rem;
         font-weight: 500;
         line-height: 1.58rem;
+        color: var(--vh-font-88);
       }
     }
 
@@ -508,6 +514,55 @@
     section.vh-code-box {
       margin: 1.188rem 0;
       position: relative;
+      border-radius: 0.618rem;
+      overflow: hidden;
+      border: 1px solid var(--vh-border-color);
+
+      // Mac 风格三色圆点
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0.72rem;
+        left: 0.88rem;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #FF5F56;
+        box-shadow: 15px 0 0 #FFBD2E, 30px 0 0 #27C93F;
+        z-index: 2;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      // hover 渐显：复制按钮、语言标签和圆点
+      &:hover {
+        border-color: rgba(139, 92, 246, 0.2);
+
+        &>span.vh-code-copy,
+        &>span.vh-code-lang {
+          opacity: 1;
+        }
+
+        &::before {
+          opacity: 1;
+        }
+      }
+
+      // 语言标签
+      &>span.vh-code-lang {
+        position: absolute;
+        top: 0.6rem;
+        left: 3.2rem;
+        font-size: 0.72rem;
+        color: var(--vh-text-secondary);
+        text-transform: uppercase;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        z-index: 1;
+        user-select: none;
+        letter-spacing: 0.05em;
+        font-weight: 500;
+      }
 
       &>span.vh-code-copy {
         display: flex;
@@ -523,8 +578,8 @@
         z-index: 1;
         overflow: hidden;
         cursor: pointer;
-        opacity: 0.66;
-        transition: all .18s;
+        opacity: 0;
+        transition: opacity 0.2s ease;
 
         &:hover {
           opacity: 1;
@@ -572,7 +627,9 @@
         border-radius: 0.618rem;
         height: max-content;
         max-height: 888px;
-        background-color: #F3F4F7 !important;
+        background-color: var(--vh-bg-card) !important;
+        white-space: pre;
+        overflow-x: auto;
 
         code {
           box-sizing: border-box;
@@ -582,6 +639,30 @@
             box-sizing: border-box;
             font-size: 0.875rem;
             line-height: 1.66;
+            white-space: pre;
+            display: inline-block;
+            width: 100%;
+
+            // 行高亮样式
+            &.highlighted {
+              background-color: rgba(139, 92, 246, 0.15);
+              border-left: 3px solid var(--vh-accent-color);
+              margin: 0 -0.888rem;
+              padding: 0 0.888rem 0 calc(0.888rem - 3px);
+              position: relative;
+
+              // 左侧光晕效果
+              &::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 20px;
+                background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), transparent);
+                pointer-events: none;
+              }
+            }
 
             &>span {
               text-decoration: none !important;
@@ -595,8 +676,8 @@
               width: 1rem;
               padding-right: 0.618rem;
               margin-right: 0.888rem;
-              border-right: 1px solid #e2e2e3;
-              color: #939296;
+              border-right: 1px solid var(--vh-border-color);
+              color: var(--vh-text-secondary);
               text-align: center;
               user-select: none;
             }
@@ -610,10 +691,10 @@
     .os-theme-dark.os-scrollbar {
       &>.os-scrollbar-track {
         &>.os-scrollbar-handle {
-          background-color: #A3A8AF88;
+          background-color: rgba(139, 92, 246, 0.3);
 
           &:hover {
-            background-color: #A3A8AF66;
+            background-color: rgba(139, 92, 246, 0.5);
           }
         }
       }

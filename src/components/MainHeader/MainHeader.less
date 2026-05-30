@@ -20,6 +20,16 @@
     z-index: -1;
   }
 
+  // 暗色遮罩增强文字可读性
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(10, 11, 16, 0.3) 0%, rgba(10, 11, 16, 0.6) 100%);
+    z-index: -1;
+  }
+
   &>.avatar {
     width: 8.5rem;
     height: 8.5rem;

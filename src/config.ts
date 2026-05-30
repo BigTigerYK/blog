@@ -33,9 +33,14 @@ export default {
   },
   // 博客主题配置
   Theme: {
-    "--vh-main-color": "#01C4B6",
-    "--vh-font-color": "#34495e",
-    "--vh-aside-width": "318px",
+    "--vh-main-color": "#8B5CF6",
+    "--vh-font-color": "#E0E6ED",
+    "--vh-bg-primary": "#0A0B10",
+    "--vh-bg-card": "#161B22",
+    "--vh-text-secondary": "#8B949E",
+    "--vh-accent-color": "#8B5CF6",
+    "--vh-golden-width": "700px",
+    "--vh-aside-width": "280px",
     "--vh-main-radius": "0.88rem",
     "--vh-main-max-width": "1458px",
   },
@@ -76,6 +81,18 @@ export default {
     Waline: {
       enable: false,
       serverURL: ''
+    },
+    Giscus: {
+      enable: true,
+      repo: '',
+      repoId: '',
+      category: 'Announcements',
+      categoryId: '',
+      mapping: 'pathname',
+      reactionsEnabled: '1',
+      emitMetadata: '0',
+      inputPosition: 'top',
+      lang: 'zh-CN',
     }
   },
   // 访问网页 自动推送到搜索引擎

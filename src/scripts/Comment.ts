@@ -3,8 +3,8 @@
  * @Date: 2025-04-07 11:31:34
  * @LastEditors: Han
  * @LastEditTime: 2025-04-21 14:32:19
- * @Description: 
- * 
+ * @Description:
+ *
  */
 import SITE_INFO from "@/config";
 import { LoadScript } from "@/utils/index";
@@ -44,6 +44,32 @@ const WalineFn = async (commentDOM: string, walineInit: any) => {
   });
 }
 
+// Giscus 评论（基于 GitHub Discussions）
+const GiscusFn = async (commentDOM: string) => {
+  const { repo, repoId, category, categoryId, mapping, reactionsEnabled, emitMetadata, inputPosition, lang } = SITE_INFO.Comment.Giscus;
+  if (!repo || !repoId) {
+    document.querySelector(commentDOM)!.innerHTML = '<p style="text-align:center;color:var(--vh-text-secondary);padding:2rem 0;font-size:0.875rem;">请先在 config.ts 中配置 Giscus 的 repo 和 repoId</p>';
+    return;
+  }
+  const container = document.querySelector(commentDOM)!;
+  container.innerHTML = '';
+  const script = document.createElement('script');
+  script.src = 'https://giscus.app/client.js';
+  script.setAttribute('data-repo', repo);
+  script.setAttribute('data-repo-id', repoId);
+  script.setAttribute('data-category', category);
+  script.setAttribute('data-category-id', categoryId);
+  script.setAttribute('data-mapping', mapping);
+  script.setAttribute('data-reactions-enabled', reactionsEnabled);
+  script.setAttribute('data-emit-metadata', emitMetadata);
+  script.setAttribute('data-input-position', inputPosition);
+  script.setAttribute('data-lang', lang);
+  script.setAttribute('data-theme', 'dark');
+  script.setAttribute('crossorigin', 'anonymous');
+  script.async = true;
+  container.appendChild(script);
+}
+
 // 检查是否开启评论
 const checkComment = () => {
   const CommentARR: any = Object.keys(SITE_INFO.Comment);
@@ -52,12 +78,12 @@ const checkComment = () => {
 }
 
 // 初始化评论插件
-const commentInit = async (key: string, walineInit: any) => {
-  // 评论 DOM 
+const commentInit = async (key: string, walineInit?: any) => {
+  // 评论 DOM
   const commentDOM = '.vh-comment>section'
   if (!document.querySelector(commentDOM)) return;
   // 评论列表
-  const CommentList: any = { TwikooFn, WalineFn };
+  const CommentList: any = { TwikooFn, WalineFn, GiscusFn };
   // 初始化评论
   CommentList[`${key}Fn`](commentDOM, walineInit);
 }

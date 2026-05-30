@@ -5,6 +5,17 @@
   width: 100%;
   height: max-content;
 
+  // 流体时间轴 - 左侧虚线
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 6.88rem;
+    width: 1px;
+    border-left: 1px dashed var(--vh-border-color);
+  }
+
   &>section.article-list {
     position: relative;
     display: grid;
@@ -14,6 +25,7 @@
     min-width: 0;
     height: max-content;
     overflow: hidden;
+    padding-left: 2rem;
 
     &>.vh-article-item {
       position: relative;
@@ -23,10 +35,38 @@
       width: 100%;
       height: initial;
       min-height: max-content;
-      border: solid 1px #eee;
+      border: solid 1px var(--vh-border-color);
       border-radius: 1rem;
-      background-color: #fff;
+      background-color: var(--vh-white-color);
       overflow: hidden;
+
+      // 时间轴圆点
+      &>.vh-timeline-dot {
+        position: absolute;
+        left: calc(-2rem - 4px);
+        top: 50%;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--vh-text-secondary, #8B949E);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1;
+        flex-shrink: 0;
+      }
+
+      &:hover {
+        &>.vh-timeline-dot {
+          background-color: var(--vh-accent-color, #8B5CF6);
+          box-shadow: 0 0 12px var(--vh-glow-purple, rgba(139,92,246,0.4));
+          animation: breathing-glow 2s ease-in-out infinite;
+        }
+
+        &>.vh-article-banner {
+          &>img {
+            transform: scale(1.08);
+          }
+        }
+      }
 
       &:hover {
         &>.vh-article-banner {
@@ -179,12 +219,14 @@
           overflow: hidden;
 
           &>a {
+            display: inline-block;
             font-size: 1.06rem;
             font-weight: 600;
-            transition: color 0.18s;
+            transition: color 0.18s, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
             &:hover {
               color: var(--vh-main-color);
+              transform: translateX(4px);
             }
           }
         }
@@ -256,4 +298,10 @@
       grid-template-columns: repeat(1, 1fr);
     }
   }
+}
+
+// 呼吸灯动画
+@keyframes breathing-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--vh-glow-purple, rgba(139,92,246,0.4)); }
+  50% { box-shadow: 0 0 20px var(--vh-glow-purple, rgba(139,92,246,0.4)); }
 }

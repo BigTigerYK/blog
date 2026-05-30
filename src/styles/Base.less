@@ -1,12 +1,18 @@
 @import url('/assets/font/index.css');
 
 :root {
-	// 白色颜色
-	--vh-white-color: #fff;
+	// 卡片/区块背景
+	--vh-white-color: var(--vh-bg-card);
 	// BoxShadow
-	--vh-box-shadow: 0 3px 8px 6px #07111b0d;
+	--vh-box-shadow: 0 3px 8px 6px rgba(0,0,0,0.3);
 	// Body 背景颜色
-	--vh-body-bg: #F8F8F8;
+	--vh-body-bg: var(--vh-bg-primary);
+	// 浮层背景
+	--vh-bg-elevated: #1C2128;
+	// 边框颜色
+	--vh-border-color: rgba(255,255,255,0.08);
+	// 紫色光晕
+	--vh-glow-purple: rgba(139,92,246,0.4);
 	// Back Top 按钮位置
 	--vh-back-top: calc((calc(100vw - 2rem) - min((100vw - 2rem), var(--vh-main-max-width))) / 2 + 1rem);
 	// 字体颜色
@@ -24,10 +30,10 @@
 	--vh-main-color-16: rgb(from var(--vh-main-color) r g b / 16%);
 	--vh-main-color-6: rgb(from var(--vh-main-color) r g b / 6%);
 
-	// Default 
+	// Default
 	--vh-default: #BEC4CC;
 	--vh-default-hover: #BEC4CC18;
-	// Info 
+	// Info
 	--vh-info: #3253b4;
 	--vh-info-hover: #3253b418;
 	// Success
@@ -95,7 +101,7 @@ html {
 			width: 100vw;
 			height: 100vh;
 			// background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(0 0 0 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-			background: #fff url('/assets/images/bg.png');
+			background: var(--vh-bg-primary) url('/assets/images/bg.png');
 			opacity: 0.188;
 			z-index: -1;
 		}
@@ -110,7 +116,8 @@ html {
 
 pre,
 code {
-	font-family: 'SF Mono' !important;
+	font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace !important;
+	font-variant-ligatures: contextual;
 }
 
 a {
