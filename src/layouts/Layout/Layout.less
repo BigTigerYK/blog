@@ -181,3 +181,103 @@ main.main {
     display: flex;
   }
 }
+
+// 专注模式按钮
+.vh-zen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  right: 1rem;
+  bottom: 1.5rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  background-color: var(--vh-bg-card);
+  border: 1px solid var(--vh-border-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 8;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  color: var(--vh-font-color);
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &:hover {
+    border-color: var(--vh-accent-color);
+    box-shadow: 0 0 12px var(--vh-glow-purple);
+  }
+
+  svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .vh-zen-btn {
+    bottom: 8.5rem;
+  }
+}
+
+// 专注模式全局样式
+html.vh-zen-mode {
+  // 隐藏侧边栏
+  aside.vh-aside {
+    display: none !important;
+  }
+
+  // 隐藏 TOC
+  .main-toc {
+    display: none !important;
+  }
+
+  // 隐藏 TOC 移动端按钮
+  .vh-toc-fab {
+    display: none !important;
+  }
+
+  // 隐藏背景泡泡效果
+  .vh-paopao,
+  .vh-aside-canvas {
+    display: none !important;
+  }
+
+  // 隐藏音乐播放器
+  .aplayer {
+    display: none !important;
+  }
+
+  // 隐藏彩旗特效
+  .vh-caiqi,
+  [class*="caiqi"] {
+    display: none !important;
+  }
+
+  // 调整主内容区域为全宽
+  main.main>.main-inner {
+    flex-direction: column !important;
+
+    &.main-inner-article {
+      display: flex !important;
+      flex-direction: column !important;
+
+      &>.main-inner-content {
+        max-width: var(--vh-golden-width) !important;
+        margin: 0 auto !important;
+      }
+    }
+  }
+
+  // 隐藏阅读进度条
+  .vh-reading-progress {
+    display: none !important;
+  }
+
+  // 隐藏 Google 广告
+  .vh-ad {
+    display: none !important;
+  }
+}

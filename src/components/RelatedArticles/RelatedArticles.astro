@@ -1,0 +1,36 @@
+---
+const { articles } = Astro.props;
+import getCover from "@/utils/getCover";
+import { fmtTime } from "@/utils/index";
+import "./RelatedArticles.less";
+---
+
+{articles.length > 0 && (
+  <section class="vh-related-articles">
+    <h3 class="vh-related-title">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+        <path d="M5 12V5a2 2 0 0 1 2 -2h7l5 5v4" />
+        <path d="M5 21h14a2 2 0 0 0 2 -2" />
+        <path d="M5 15v4a2 2 0 0 0 2 2h4" />
+        <path d="M17 17v2a2 2 0 0 1 -2 2h-2" />
+      </svg>
+      相关推荐
+    </h3>
+    <div class="vh-related-list">
+      {articles.map(async (article: any) => {
+        const cover = await getCover(article.cover);
+        return (
+          <a class="vh-related-item" href={`/article/${article.id}`}>
+            <div class="vh-related-cover" style={`background-image: url('${cover}')`} />
+            <div class="vh-related-info">
+              <span class="vh-related-name vh-ellipsis">{article.title}</span>
+              <time>{fmtTime(article.date, "YYYY-MM-DD")}</time>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+)}

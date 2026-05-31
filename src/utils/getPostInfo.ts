@@ -40,4 +40,29 @@ const getPrevNextPosts = (id: string) => {
 }
 
 
-export { getCategories, getTags, getRecommendArticles, getCountInfo, getPrevNextPosts };
+// 获取相关文章（基于标签和分类匹配）
+const getRelatedPosts = (currentId: string, tags: string[] = [], categories: string = '', limit = 4) => {
+  const scored = posts
+    .filter(i => i.data.id !== currentId && !i.data.hide)
+    .map(i => {
+      let score = 0;
+      const postTags = i.data.tags || [];
+      postTags.forEach((t: string) => { if (tags.includes(t)) score += 2; });
+      if (i.data.categories === categories) score += 3;
+      return { ...i, score };
+    })
+    .filter(i => i.score > 0)
+    .sort((a, b) => b.score - a.score || b.data.date.valueOf() - a.data.date.valueOf())
+    .slice(0, limit);
+  if (scored.length < limit) {
+    const existingIds = new Set(scored.map(i => i.data.id));
+    existingIds.add(currentId);
+    const fillers = posts
+      .filter(i => !existingIds.has(i.data.id) && !i.data.hide)
+      .slice(0, limit - scored.length);
+    scored.push(...fillers);
+  }
+  return scored.map(i => ({ title: i.data.title, id: i.data.id, cover: i.data.cover, date: i.data.date, tags: i.data.tags, categories: i.data.categories }));
+};
+
+export { getCategories, getTags, getRecommendArticles, getCountInfo, getPrevNextPosts, getRelatedPosts };

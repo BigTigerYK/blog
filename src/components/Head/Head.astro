@@ -57,10 +57,15 @@ import "@/styles/Base.less";
 	<!-- DNS预解析 -->
 	{DNSOptimization.map((url: string) => <link rel="dns-prefetch" href={url} />)}
 	{DNSOptimization.map((url: string) => <link rel="preconnect" href={url} />)}
-	<!-- JetBrains Mono 字体 -->
+	<!-- JetBrains Mono 字体（异步加载，不阻塞渲染） -->
+	<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+	<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+	<noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
+	<!-- 预加载字体 CSS（避免 @import 瀑布） -->
+	<link rel="preload" href="/assets/font/index.css" as="style" />
 	<!-- LINK 标签 -->
 	<link rel="canonical" href={canonicalURL} />
 	<link rel="icon" type="image/x-icon" href="/favicon.ico" />

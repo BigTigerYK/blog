@@ -27,8 +27,6 @@ import initLinks from "@/scripts/Links";
 import initFriends from "@/scripts/Friends";
 // 动态说说初始化
 import initTalking from "@/scripts/Talking";
-// 文章评论初始化
-import { checkComment, commentInit } from "@/scripts/Comment";
 // 移动端侧边栏初始化
 import initMobileSidebar from "@/scripts/MobileSidebar";
 // Google 广告
@@ -41,13 +39,24 @@ import SeoPushInit from "@/scripts/SeoPush";
 import SmoothScroll from "@/scripts/Smoothscroll";
 // TOC 动态高亮
 import { tocInit, tocDestroy } from "@/scripts/Toc";
+// 专注模式
+import ZenModeInit from "@/scripts/ZenMode";
 
 // ============================================================
 
 // 页面初始化 Only
 const videoList: any[] = [];
 const MusicList: any[] = [];
-let commentLIst: any = { walineInit: null };
+// 延迟加载模块（首次交互/滚动后才加载）
+let deferredLoaded = false;
+const loadDeferred = () => {
+  if (deferredLoaded) return;
+  deferredLoaded = true;
+  GoogleAdInit();
+  SeoPushInit();
+  HanAnalyticsInit();
+};
+
 const indexInit = async (only: boolean = true) => {
   // 初始化网站运行时间
   only && initWebSiteTime();
@@ -73,14 +82,6 @@ const indexInit = async (only: boolean = true) => {
   initFriends();
   // 动态说说初始化
   initTalking();
-  // Google 广告
-  GoogleAdInit();
-  // 谷歌 SEO 推送
-  SeoPushInit();
-  // 文章评论初始化
-  checkComment() && commentInit(checkComment(), commentLIst)
-  // Han Analytics 统计
-  HanAnalyticsInit();
   // 打字效果
   only && TypeWriteInit();
   // 泡泡🫧效果
@@ -93,6 +94,25 @@ const indexInit = async (only: boolean = true) => {
   initMobileSidebar();
   // TOC 动态高亮
   tocInit();
+  // 专注模式
+  only && ZenModeInit();
+  // 延迟加载：首次滚动或交互后加载广告、评论、统计、SEO推送
+  if (only) {
+    const triggerLoad = () => {
+      loadDeferred();
+      window.removeEventListener('scroll', triggerLoad);
+      window.removeEventListener('click', triggerLoad);
+      window.removeEventListener('keydown', triggerLoad);
+    };
+    window.addEventListener('scroll', triggerLoad, { once: true, passive: true });
+    window.addEventListener('click', triggerLoad, { once: true });
+    window.addEventListener('keydown', triggerLoad, { once: true });
+    // 兜底：8秒后无论如何加载
+    setTimeout(loadDeferred, 8000);
+  } else {
+    // SPA 路由切换时立即加载
+    loadDeferred();
+  }
 };
 
 export default () => {
@@ -102,9 +122,8 @@ export default () => {
   inRouter(() => indexInit(false));
   // 离开当前页面时触发
   outRouter(() => {
-    // 销毁评论
-    commentLIst.walineInit && commentLIst.walineInit.destroy();
-    commentLIst.walineInit = null;
+    // 重置延迟加载状态
+    deferredLoaded = false;
     // 销毁播放器
     videoList.forEach((i: any) => i.destroy());
     videoList.length = 0;

@@ -47,12 +47,13 @@ export default {
   // 导航栏
   Navs: [
     { text: '昔日', link: '/archives', icon: 'Nav_archives' },
-    { text: '留言', link: '/message', icon: 'Nav_message' },
+    { text: '碎碎念', link: '/talking', icon: 'Nav_talking' },
     { text: '关于', link: '/about', icon: 'Nav_about' },
+    { text: '友链', link: '/links', icon: 'Nav_link' },
   ],
   // 侧边栏个人网站
   WebSites: [
-    { text: 'Github', link: 'https://github.com/', icon: 'WebSite_github' },
+    { text: 'Github', link: 'https://github.com/BigTigerYK', icon: 'WebSite_github' },
   ],
   // 侧边栏展示
   AsideShow: {
@@ -71,29 +72,6 @@ export default {
   Reward: {
     AliPay: '',
     WeChat: ''
-  },
-  // 评论组件（只允许同时开启一个）
-  Comment: {
-    Twikoo: {
-      enable: false,
-      envId: ''
-    },
-    Waline: {
-      enable: false,
-      serverURL: ''
-    },
-    Giscus: {
-      enable: true,
-      repo: '',
-      repoId: '',
-      category: 'Announcements',
-      categoryId: '',
-      mapping: 'pathname',
-      reactionsEnabled: '1',
-      emitMetadata: '0',
-      inputPosition: 'top',
-      lang: 'zh-CN',
-    }
   },
   // 访问网页 自动推送到搜索引擎
   SeoPush: {

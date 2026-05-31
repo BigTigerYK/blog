@@ -3,7 +3,7 @@
 // Svg 组件
 import Svg from "@/components/Svg/Svg.astro";
 // 时间处理
-import { fmtTime } from "@/utils/index";
+import { fmtTime, fmtDate } from "@/utils/index";
 // 获取用户配置数据
 import SITE_CONFIG from "@/config";
 const { Avatar, Author, Motto, WebSites, GoogleAds, AsideShow } = SITE_CONFIG;
@@ -18,6 +18,9 @@ const tags = getTags().slice(0, 16);
 const CountInfo = getCountInfo();
 // 最新文章
 const recommendArticles = getRecommendArticles();
+// 获取最新动态
+import TALKING_DATA from "@/page_data/Talking";
+const latestTalking = (TALKING_DATA.api ? null : TALKING_DATA.data?.[0]) || null;
 // Google 广告组件
 import GoogleAd from "@/components/GoogleAd/GoogleAd.astro";
 // 侧边栏样式
@@ -71,6 +74,35 @@ import "./Aside.less";
 				</span>
 				<div class="tips-content">
 					<Fragment set:html={SITE_CONFIG.Tips} />
+				</div>
+			</section>
+		)
+	}
+
+	<!-- 最新动态块 -->
+	{
+		latestTalking && (
+			<section class="vh-aside-item talking">
+				<h3>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+						<path d="M4 21V14a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v7" />
+						<path d="M12 11V3" />
+						<path d="M8 7l4 -4l4 4" />
+					</svg>
+					最新动态
+				</h3>
+				<div class="vh-aside-talking">
+					<div class="talking-content" set:html={latestTalking.content} />
+					<div class="talking-meta">
+						<time>{fmtDate(latestTalking.date)}前</time>
+						{latestTalking.tags?.length > 0 && (
+							<span class="talking-tags">
+								{latestTalking.tags.slice(0, 3).map((tag: string) => <em>{tag}</em>)}
+							</span>
+						)}
+					</div>
+					<a href="/talking" class="talking-link">查看更多 &rarr;</a>
 				</div>
 			</section>
 		)
