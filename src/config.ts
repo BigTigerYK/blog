@@ -10,7 +10,7 @@ export default {
   // 网站作者
   Author: 'Chow',
   // 作者头像
-  Avatar: '/assets/images/avatar.jpg',
+  Avatar: '/assets/images/toux.png',
   // 网站座右铭
   Motto: '',
   // Cover 网站缩略图
