@@ -82,8 +82,8 @@ const indexInit = async (only: boolean = true) => {
   initFriends();
   // 动态说说初始化
   initTalking();
-  // 打字效果
-  only && TypeWriteInit();
+  // 打字效果（每次路由进入都尝试初始化，内部防重复）
+  TypeWriteInit();
   // 泡泡🫧效果
   PaoPaoInit();
   // 预加载搜索数据

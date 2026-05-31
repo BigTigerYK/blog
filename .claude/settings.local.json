@@ -17,7 +17,12 @@
       "Bash(git checkout *)",
       "Bash(npm run *)",
       "Bash(pnpm add *)",
-      "Bash(npx astro *)"
+      "Bash(npx astro *)",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\);console.log\\(j.node_id||'NOT FOUND'\\)}\\)\")",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const cats=JSON.parse\\(d\\);cats.forEach\\(c=>console.log\\(c.name,c.node_id\\)\\)}\\)\")",
+      "mcp__codegraph__codegraph_files",
+      "Bash(npx sharp-cli *)",
+      "Bash(node -e \"const sharp=require\\('sharp'\\);sharp\\('home-banner.webp'\\).metadata\\(\\).then\\(m=>console.log\\(m.width,'x',m.height,m.size\\)\\)\")"
     ]
   }
 }

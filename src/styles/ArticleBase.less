@@ -12,24 +12,39 @@
       display: inline-block;
       box-sizing: border-box;
       margin: 1.666rem 0 0.36rem;
+      color: var(--vh-text-title);
       font-size: 1rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: 0.02em;
       width: 100%;
       max-width: 100%;
       word-break: break-all;
+    }
+
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      border-left: 3px solid var(--vh-accent-color);
+      padding-left: 0.66rem;
+
+      &::before {
+        content: "#";
+        padding-right: 0.36rem;
+        color: var(--vh-font-16);
+        opacity: 0;
+        transform: translateX(-8px);
+        display: inline-block;
+        transition: all 0.25s ease;
+      }
 
       &:hover {
         &::before {
           color: var(--vh-main-color-88);
+          opacity: 1;
+          transform: translateX(0);
         }
-      }
-
-      &::before {
-        padding-right: 0.56rem;
-        content: "#";
-        color: var(--vh-font-28);
-        transition: color 0.18s ease-in-out;
       }
     }
 
@@ -66,7 +81,8 @@
     ol:not(.vh-vhMusic ol) {
       padding: 0.618rem 0;
       font-size: 0.9375rem;
-      line-height: 1.75;
+      line-height: 1.8;
+      letter-spacing: 0.02em;
 
       li {
         color: var(--vh-font-66);
@@ -87,10 +103,10 @@
 
       // 其下面的code标签样式
       code {
-        background-color: #21262D;
+        background-color: var(--vh-main-color-16);
         padding: .125rem .375rem;
         font-size: 0.8125rem;
-        color: #D2A8FF;
+        color: var(--vh-main-color-88);
         border-radius: 0.25rem;
       }
     }
@@ -205,6 +221,7 @@
 
       // :::note
       &.vh-note {
+        position: relative;
         display: flex;
         flex-direction: column;
         gap: 0.688rem;
@@ -213,11 +230,25 @@
         border-radius: 3px;
         background-color: var(--vh-font-6);
 
+        &::after {
+          position: absolute;
+          top: 0.58rem;
+          right: 0.66rem;
+          font-size: 1.18rem;
+          line-height: 1;
+          opacity: 0.7;
+          pointer-events: none;
+        }
+
         &.note-success {
           border-color: var(--vh-success);
           border-left: 5px solid var(--vh-success);
           border-left-color: var(--vh-success);
           background-color: var(--vh-success-hover);
+
+          &::after {
+            content: "\2705";
+          }
         }
 
         &.note-info {
@@ -225,6 +256,10 @@
           border-left: 5px solid var(--vh-info);
           border-left-color: var(--vh-info);
           background-color: var(--vh-info-hover);
+
+          &::after {
+            content: "\1F4A1";
+          }
         }
 
         &.note-warning {
@@ -232,6 +267,10 @@
           border-left: 5px solid var(--vh-warning);
           border-left-color: var(--vh-warning);
           background-color: var(--vh-warning-hover);
+
+          &::after {
+            content: "\26A1";
+          }
         }
 
         &.note-error {
@@ -239,12 +278,20 @@
           border-left: 5px solid var(--vh-error);
           border-left-color: var(--vh-error);
           background-color: var(--vh-error-hover);
+
+          &::after {
+            content: "\274C";
+          }
         }
 
         &.note-import {
           border-left: 5px solid var(--vh-import);
           border-left-color: var(--vh-import);
           background-color: var(--vh-import-hover);
+
+          &::after {
+            content: "\1F4E2";
+          }
         }
 
         p {
@@ -260,21 +307,24 @@
         box-sizing: border-box;
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 0.58rem;
         padding: 0 1.18rem;
         width: max-content;
         max-width: 100%;
-        height: 2.28rem;
-        border: solid 1px #333;
-        border-radius: 0.28rem;
-        background-color: var(--vh-white-color);
+        height: 2.5rem;
+        border: solid 1px var(--vh-font-28);
+        border-radius: 0.38rem;
+        background-color: var(--vh-font-6);
         cursor: pointer;
-        transition: background-color 0.18s ease-in-out;
+        transition: all 0.18s ease-in-out;
         z-index: 1;
         user-select: none;
         overflow: hidden;
 
         &:hover {
+          background-color: var(--vh-font-16);
+          border-color: var(--vh-font-56);
           &::before {
             left: 0;
             width: 100%;
@@ -284,7 +334,7 @@
         &::after {
           flex-shrink: 0;
           content: '';
-          background-color: #000;
+          background-color: var(--vh-font-color);
           mask: url('data:image/svg+xml,%3Csvg%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%20width%3D%22100%25%22%20%20height%3D%22100%25%22%20%20viewBox%3D%220%200%2024%2024%22%20%20fill%3D%22none%22%20%20stroke%3D%22currentColor%22%20%20stroke-width%3D%222%22%20%20stroke-linecap%3D%22round%22%20%20stroke-linejoin%3D%22round%22%3E%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M17%2022v-2%22%20%2F%3E%3Cpath%20d%3D%22M9%2015l6%20-6%22%20%2F%3E%3Cpath%20d%3D%22M11%206l.463%20-.536a5%205%200%200%201%207.071%207.072l-.534%20.464%22%20%2F%3E%3Cpath%20d%3D%22M13%2018l-.397%20.534a5.068%205.068%200%200%201%20-7.127%200a4.972%204.972%200%200%201%200%20-7.071l.524%20-.463%22%20%2F%3E%3Cpath%20d%3D%22M20%2017h2%22%20%2F%3E%3Cpath%20d%3D%22M2%207h2%22%20%2F%3E%3Cpath%20d%3D%22M7%202v2%22%20%2F%3E%3C%2Fsvg%3E') no-repeat center center;
           background-size: contain;
           width: 1.18rem;
@@ -306,7 +356,7 @@
 
         &>span {
           box-sizing: border-box;
-          color: #000;
+          color: var(--vh-font-color);
           font-weight: 600;
           font-size: 0.875rem;
           white-space: nowrap;
@@ -518,6 +568,23 @@
       overflow: hidden;
       border: 1px solid var(--vh-border-color);
 
+      // 语言水印
+      &::after {
+        content: attr(data-lang);
+        position: absolute;
+        right: 0.88rem;
+        bottom: 0.5rem;
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: rgba(255,255,255,0.03);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        pointer-events: none;
+        z-index: 0;
+        line-height: 1;
+        font-family: 'JetBrains Mono', monospace;
+      }
+
       // Mac 风格三色圆点
       &::before {
         content: '';
@@ -627,7 +694,7 @@
         border-radius: 0.618rem;
         height: max-content;
         max-height: 888px;
-        background-color: var(--vh-bg-card) !important;
+        background-color: #0D1117 !important;
         white-space: pre;
         overflow-x: auto;
 

@@ -22,6 +22,12 @@
 	--vh-font-28: rgb(from var(--vh-font-color) r g b / 28%);
 	--vh-font-16: rgb(from var(--vh-font-color) r g b / 16%);
 	--vh-font-6: rgb(from var(--vh-font-color) r g b / 6%);
+	// 语义化文本颜色系统 (Semantic Text Colors)
+	--vh-text-title: #F8FAFC;         // 一级文字：大标题/强调用色 (极亮)
+	--vh-text-body: var(--vh-font-color); // 二级文字：正文常规色 (#E0E6ED)
+	--vh-text-muted: #94A3B8;         // 三级文字：弱化/辅助说明 (如日期、阅读数等)
+	--vh-text-subtle: #475569;        // 四级文字：极弱提示或禁用状态
+
 	// 主题色
 	--vh-main-color-88: rgb(from var(--vh-main-color) r g b / 88%);
 	--vh-main-color-66: rgb(from var(--vh-main-color) r g b / 66%);
@@ -221,9 +227,9 @@ img[data-vh-lz-src] {
 // 首次加载效果
 .vh-animation.vh-animation-init {
 	opacity: 0;
-	animation: 300ms vh-init-show;
+	animation: 400ms vh-init-show;
 	animation-fill-mode: forwards;
-	transition: opacity 0.18s ease-in-out, transform 0.18s ease-in-out;
+	transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 // swup 动画效果
@@ -241,7 +247,7 @@ html.is-changing {
 html.is-animating {
 	.vh-animation {
 		&.vh-animation-init {
-			transform: translateY(0.88rem);
+			transform: translateY(15px);
 			opacity: 0;
 		}
 	}
@@ -323,7 +329,7 @@ html.is-animating {
 
 @keyframes vh-init-show {
 	0% {
-		transform: translateY(2rem);
+		transform: translateY(15px);
 		opacity: 0;
 	}
 
@@ -345,7 +351,7 @@ html.is-animating {
 
 @-webkit-keyframes vh-init-show {
 	0% {
-		transform: translateY(2rem);
+		transform: translateY(15px);
 		opacity: 0;
 	}
 
