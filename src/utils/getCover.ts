@@ -62,5 +62,5 @@ const fileIter = createImageIterator(targetDir);
 export default async (filename: string | null | undefined) => {
   if (filename) return filename;
   const { value } = await fileIter.next();
-  return SITE_INFO.Site + `/assets/images/banner/${value}`
+  return `/assets/images/banner/${value}`
 }

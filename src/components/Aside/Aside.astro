@@ -95,7 +95,7 @@ import "./Aside.less";
 				<div class="vh-aside-talking">
 					<div class="talking-content" set:html={latestTalking.content} />
 					<div class="talking-meta">
-						<time>{fmtDate(latestTalking.date)}前</time>
+						<time data-time={latestTalking.date}>{fmtDate(latestTalking.date)}前</time>
 						{latestTalking.tags?.length > 0 && (
 							<span class="talking-tags">
 								{latestTalking.tags.slice(0, 3).map((tag: string) => <em>{tag}</em>)}
@@ -175,4 +175,49 @@ import "./Aside.less";
 			)
 		}
 	</section>
+
+	<script is:inline>
+		(function() {
+			function diffDate(now, past, unit) {
+				var start = new Date(past);
+				var end = new Date(now);
+				if (unit === 'year') return end.getFullYear() - start.getFullYear();
+				if (unit === 'month') return (end.getFullYear() - start.getFullYear()) * 12 + end.getMonth() - start.getMonth();
+				if (unit === 'day') return Math.floor((end - start) / 86400000);
+				if (unit === 'hour') return Math.floor((end - start) / 3600000);
+				if (unit === 'minute') return Math.floor((end - start) / 60000);
+				if (unit === 'second') return Math.floor((end - start) / 1000);
+				return 0;
+			}
+			function addDate(date, unit, amount) {
+				var d = new Date(date);
+				if (unit === 'year') d.setFullYear(d.getFullYear() + amount);
+				else if (unit === 'month') d.setMonth(d.getMonth() + amount);
+				else if (unit === 'day') d.setDate(d.getDate() + amount);
+				else if (unit === 'hour') d.setHours(d.getHours() + amount);
+				else if (unit === 'minute') d.setMinutes(d.getMinutes() + amount);
+				else if (unit === 'second') d.setSeconds(d.getSeconds() + amount);
+				return d;
+			}
+			function fmtDate(dateStr) {
+				var now = new Date();
+				var past = new Date(dateStr.replace(/-/g, '/'));
+				var units = [
+					['year', '年'], ['month', '月'], ['day', '天'],
+					['hour', '小时'], ['minute', '分'], ['second', '秒']
+				];
+				var adjusted = new Date(past);
+				for (var i = 0; i < units.length; i++) {
+					var val = diffDate(now, adjusted, units[i][0]);
+					if (val > 0) return val + units[i][1];
+					adjusted = addDate(adjusted, units[i][0], val);
+				}
+				return '刚刚';
+			}
+			var el = document.querySelector('.vh-aside-talking time[data-time]');
+			if (el) {
+				el.textContent = fmtDate(el.getAttribute('data-time')) + '前';
+			}
+		})();
+	</script>
 </aside>

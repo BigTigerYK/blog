@@ -42,7 +42,7 @@ import "@/styles/Article.less";
 import "@/styles/ArticleBase.less";
 ---
 
-<Layout title={post.data.title} keywords={post.data.tags} description={description} pagecover={ARTICLE_COVER} articleLayout={true} headings={headings}>
+<Layout title={post.data.title} keywords={post.data.tags} description={description} pagecover={ARTICLE_COVER} articleLayout={true} headings={headings} datePublished={post.data.date} dateModified={post.data.updated || post.data.date}>
 	<article class="vh-article-main vh-animation vh-animation-init" data-pagefind-body>
 		<header>
 			<h1 data-pagefind-meta="title">{post.data.title}</h1>

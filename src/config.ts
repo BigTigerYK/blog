@@ -79,6 +79,12 @@ export default {
     serverApi: '',
     paramsName: 'url'
   },
+  // Han Analytics 统计
+  HanAnalytics: {
+    enable: false,
+    server: '',
+    siteId: ''
+  },
   // DNS预解析地址
   DNSOptimization: [
     'https://cn.cravatar.com',
