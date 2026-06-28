@@ -27,6 +27,12 @@
       width: 100%;
       height: max-content;
 
+      // Markdown 插槽内容容器
+      &:not(.main):has(*) {
+        padding: 1rem;
+        background-color: var(--vh-white-color);
+      }
+
       &.main {
 
         // 友情链接
@@ -97,7 +103,7 @@
                 width: 100%;
                 height: max-content;
                 font-size: 0.81rem;
-                color: var(--vh-font-56);
+                color: var(--vh-font-muted);
                 line-height: 1rem;
               }
             }

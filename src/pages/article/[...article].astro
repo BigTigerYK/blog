@@ -36,6 +36,8 @@ import RelatedArticles from "@/components/RelatedArticles/RelatedArticles.astro"
 import Reward from "@/components/Reward/Reward.astro";
 // Google 广告组件
 import GoogleAd from "@/components/GoogleAd/GoogleAd.astro";
+// 评论区组件
+import Comment from "@/components/Comment/Comment.astro";
 // 文章页面样式
 import "@/styles/Article.less";
 // 文章内容基础样式
@@ -84,9 +86,33 @@ import "@/styles/ArticleBase.less";
 			<!-- 版权©️信息 -->
 			<Copyright site={Site} id={post.data.id} title={post.data.title} sitename={Title} time={fmtTime(post.data.date, "YYYY-MM-DD A")} auther={Author} />
 			<!-- 底部谷歌广告 -->
-			{GoogleAds.ad_Client && GoogleAds.articleAD_Slot && <GoogleAd className="vh-article-ad" slotID={GoogleAds.articleAD_Slot} />}
+			{GoogleAds.ad_Client && GoogleAds.articleAD_Slot && <GoogleAd className="vh-article-ad" slotID={GoogleAds.articleAD_Slot} adClient={GoogleAds.ad_Client} />}
 		</footer>
 		<!-- 相关文章推荐 -->
 		<RelatedArticles articles={relatedArticles} />
+		<!-- 评论区 -->
+		<Comment />
+		<!-- Giscus 容器和脚本（脚本必须在容器内部，iframe 才能正确插入） -->
+		<div id="commentContainer" class="vh-comment-container-outer">
+			<div class="vh-comment-loading" id="commentLoading">
+				<span></span><span></span><span></span>
+			</div>
+			<script
+				src="https://giscus.app/client.js"
+				data-repo="BigTigerYK/blog"
+				data-repo-id="R_kgDOSsHguQ"
+				data-category="Announcements"
+				data-category-id="DIC_kwDOSsHguc4C-NUk"
+				data-mapping="pathname"
+				data-strict="0"
+				data-reactions-enabled="1"
+				data-emit-metadata="0"
+				data-input-position="bottom"
+				data-theme="dark"
+				data-lang="zh-CN"
+				crossorigin="anonymous"
+				async
+			/>
+		</div>
 	</article>
 </Layout>

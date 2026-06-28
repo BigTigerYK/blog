@@ -8,8 +8,12 @@ const LinksInit = async (data: any) => {
   if (!linksDOM) return;
   try {
     let res = data;
-    if (typeof data === 'string') {
+    if (typeof data === 'string' && data) {
       res = await $GET(data);
+    }
+    if (!Array.isArray(res) || res.length === 0) {
+      linksDOM.innerHTML = '<p style="text-align:center;color:var(--vh-text-muted);padding:2rem 0;">暂无内容</p>';
+      return;
     }
     linksDOM.innerHTML = res.map((i: any) => `<a href="${i.link}" target="_blank"><img class="avatar" src="${i.avatar}" /><section class="link-info"><span>${i.name}</span><p class="vh-ellipsis line-2">${i.descr}</p></section></a>`).join('');
     // 图片懒加载

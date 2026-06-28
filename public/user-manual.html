@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoCodeFlow 用户使用手册</title>
+<style>
+  /* ========== CSS Variables & Reset ========== */
+  :root {
+    --primary: #6366f1;
+    --primary-light: #818cf8;
+    --primary-bg: #eef2ff;
+    --success: #22c55e;
+    --success-bg: #f0fdf4;
+    --warning: #f59e0b;
+    --warning-bg: #fffbeb;
+    --danger: #ef4444;
+    --danger-bg: #fef2f2;
+    --info: #3b82f6;
+    --info-bg: #eff6ff;
+    --text: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --bg: #ffffff;
+    --bg-alt: #f8fafc;
+    --bg-code: #f1f5f9;
+    --border: #e2e8f0;
+    --sidebar-w: 280px;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,.1);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --primary: #818cf8;
+      --primary-light: #a5b4fc;
+      --primary-bg: #1e1b4b;
+      --success: #4ade80;
+      --success-bg: #052e16;
+      --warning: #fbbf24;
+      --warning-bg: #422006;
+      --danger: #f87171;
+      --danger-bg: #450a0a;
+      --info: #60a5fa;
+      --info-bg: #172554;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --bg: #0f172a;
+      --bg-alt: #1e293b;
+      --bg-code: #1e293b;
+      --border: #334155;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: var(--font);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ========== Sidebar Navigation ========== */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--bg-alt);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform .3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg-alt);
+    z-index: 1;
+  }
+  .sidebar-header h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sidebar-header .version {
+    font-size: .75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .sidebar nav { padding: 12px 0; flex: 1; }
+  .sidebar nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: .875rem;
+    transition: all .15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar nav a:hover {
+    color: var(--primary);
+    background: var(--primary-bg);
+    border-left-color: var(--primary-light);
+  }
+  .sidebar nav a.active {
+    color: var(--primary);
+    font-weight: 600;
+    background: var(--primary-bg);
+    border-left-color: var(--primary);
+  }
+  .sidebar nav .section-title {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text-muted);
+    padding: 16px 20px 6px;
+    font-weight: 600;
+  }
+  .sidebar nav .indent { padding-left: 36px; }
+
+  /* ========== Mobile sidebar toggle ========== */
+  .sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 12px; left: 12px;
+    z-index: 200;
+    width: 40px; height: 40px;
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-lg);
+  }
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); box-shadow: var(--shadow-lg); }
+    .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+    .main { margin-left: 0 !important; }
+    .main-content { padding: 24px 16px !important; }
+  }
+
+  /* ========== Main Content ========== */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-width: 0;
+  }
+  .main-content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+  }
+
+  /* ========== Search Bar ========== */
+  .search-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .search-bar input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    font-size: .875rem;
+    background: var(--bg-alt);
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-bar input:focus { border-color: var(--primary); }
+  .search-bar .search-icon { color: var(--text-muted); font-size: 1rem; }
+  .search-bar .search-count {
+    font-size: .75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .search-bar kbd {
+    font-size: .7rem;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  /* ========== Typography ========== */
+  .main-content h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary-bg);
+    color: var(--text);
+    scroll-margin-top: 60px;
+  }
+  .main-content h2:first-child { margin-top: 0; }
+  .main-content h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    color: var(--text);
+    scroll-margin-top: 60px;
+  }
+  .main-content h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 24px 0 8px;
+    color: var(--text-secondary);
+    scroll-margin-top: 60px;
+  }
+  .main-content p { margin: 8px 0; }
+  .main-content ul, .main-content ol {
+    margin: 8px 0 8px 24px;
+  }
+  .main-content li { margin: 4px 0; }
+  .main-content a {
+    color: var(--primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s;
+  }
+  .main-content a:hover { border-bottom-color: var(--primary); }
+
+  /* ========== Code Blocks ========== */
+  code {
+    font-family: var(--font-mono);
+    font-size: .85em;
+    background: var(--bg-code);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--danger);
+  }
+  pre {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 12px 0;
+    font-size: .85rem;
+    line-height: 1.6;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: var(--text);
+  }
+
+  /* ========== Alert / Callout Boxes ========== */
+  .callout {
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: .9rem;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .callout .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+  .callout-tip { background: var(--success-bg); border-left: 4px solid var(--success); }
+  .callout-warn { background: var(--warning-bg); border-left: 4px solid var(--warning); }
+  .callout-danger { background: var(--danger-bg); border-left: 4px solid var(--danger); }
+  .callout-info { background: var(--info-bg); border-left: 4px solid var(--info); }
+
+  /* ========== UI Mock ========== */
+  .ui-mock {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+    margin: 16px 0;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .ui-mock-titlebar {
+    background: var(--bg-code);
+    padding: 8px 14px;
+    font-size: .75rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ui-mock-titlebar .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .ui-mock-titlebar .dot-red { background: #ef4444; }
+  .ui-mock-titlebar .dot-yellow { background: #f59e0b; }
+  .ui-mock-titlebar .dot-green { background: #22c55e; }
+  .ui-mock-body { padding: 16px; }
+  .ui-mock-body .mock-sidebar {
+    width: 48px;
+    background: var(--bg-code);
+    border-radius: 6px;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+  .ui-mock-body .mock-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+    color: var(--text-muted);
+  }
+  .ui-mock-body .mock-icon.active {
+    background: var(--primary);
+    color: #fff;
+  }
+  .mock-highlight {
+    outline: 2px dashed var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+    position: relative;
+  }
+  .mock-label {
+    position: absolute;
+    top: -20px; left: 0;
+    background: var(--primary);
+    color: #fff;
+    font-size: .65rem;
+    padding: 1px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  /* ========== Tooltip ========== */
+  .tooltip-trigger {
+    border-bottom: 1px dashed var(--primary);
+    cursor: help;
+    position: relative;
+  }
+  .tooltip-trigger .tooltip-content {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: var(--bg);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: .8rem;
+    white-space: nowrap;
+    max-width: 280px;
+    white-space: normal;
+    z-index: 300;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .tooltip-trigger:hover .tooltip-content { display: block; }
+
+  /* ========== Collapsible / Accordion ========== */
+  .collapsible {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 12px 0;
+    overflow: hidden;
+  }
+  .collapsible-header {
+    background: var(--bg-alt);
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: .9rem;
+    user-select: none;
+    transition: background .15s;
+  }
+  .collapsible-header:hover { background: var(--primary-bg); }
+  .collapsible-header .arrow {
+    transition: transform .2s;
+    font-size: .75rem;
+    color: var(--text-muted);
+  }
+  .collapsible.open .collapsible-header .arrow { transform: rotate(90deg); }
+  .collapsible-body {
+    display: none;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    font-size: .9rem;
+    line-height: 1.8;
+  }
+  .collapsible.open .collapsible-body { display: block; }
+
+  /* ========== Steps / Process ========== */
+  .steps { margin: 16px 0; counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .step::before {
+    counter-increment: step;
+    content: counter(step);
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .85rem;
+  }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 40px;
+    bottom: -16px;
+    width: 2px;
+    background: var(--border);
+  }
+  .step-content { flex: 1; padding-top: 4px; }
+  .step-content strong { color: var(--text); }
+
+  /* ========== Keyboard Shortcut Badge ========== */
+  kbd {
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    color: var(--text-secondary);
+    box-shadow: 0 1px 0 var(--border);
+  }
+
+  /* ========== Table ========== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: .9rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg-alt);
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  /* ========== Tag / Badge ========== */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .75rem;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  .tag-primary { background: var(--primary-bg); color: var(--primary); }
+  .tag-success { background: var(--success-bg); color: var(--success); }
+  .tag-warning { background: var(--warning-bg); color: var(--warning); }
+  .tag-danger { background: var(--danger-bg); color: var(--danger); }
+
+  /* ========== Highlight mark ========== */
+  mark {
+    background: #fef08a;
+    color: var(--text);
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+  @media (prefers-color-scheme: dark) {
+    mark { background: #854d0e; color: #fef3c7; }
+  }
+
+  /* ========== Back to Top ========== */
+  .back-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-lg);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    transition: opacity .2s;
+  }
+  .back-top.show { display: flex; }
+
+  /* ========== Utility ========== */
+  .flex-row { display: flex; gap: 12px; align-items: center; }
+  .gap-sm { gap: 6px; }
+  .text-sm { font-size: .875rem; }
+  .text-xs { font-size: .8rem; }
+  .text-muted { color: var(--text-muted); }
+  .mt-2 { margin-top: 8px; }
+  .mb-2 { margin-bottom: 8px; }
+  .img-placeholder {
+    background: var(--bg-code);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: .85rem;
+    margin: 16px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- Mobile Sidebar Toggle -->
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="切换目录">
+  &#9776;
+</button>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1>&#9889; NoCodeFlow</h1>
+    <div class="version">用户使用手册 &middot; v3.0</div>
+  </div>
+  <nav id="nav">
+    <div class="section-title">快速开始</div>
+    <a href="#intro" class="active">产品简介</a>
+    <a href="#install">安装与启动</a>
+    <a href="#onboarding">首次引导</a>
+
+    <div class="section-title">核心功能</div>
+    <a href="#task-center">任务中心</a>
+    <a href="#workspace">工作空间</a>
+    <a href="#agent">AI Agent 对话</a>
+    <a href="#knowledge">知识库</a>
+    <a href="#snapshot">快照与回滚</a>
+
+    <div class="section-title">高级功能</div>
+    <a href="#context">上下文引擎</a>
+    <a href="#permission">权限管理</a>
+    <a href="#command-palette">命令面板</a>
+    <a href="#agent-skill">适配器与 Skill</a>
+
+    <div class="section-title">配置与设置</div>
+    <a href="#settings-general">通用设置</a>
+    <a href="#settings-agent">Agent 配置</a>
+    <a href="#settings-permission">权限设置</a>
+    <a href="#settings-memory">记忆管理</a>
+
+    <div class="section-title">附录</div>
+    <a href="#shortcuts">快捷键速查</a>
+    <a href="#faq">常见问题</a>
+    <a href="#glossary">术语表</a>
+  </nav>
+</aside>
+
+<!-- ==================== MAIN ==================== -->
+<div class="main">
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="搜索手册内容..." aria-label="搜索">
+    <span class="search-count" id="searchCount"></span>
+    <kbd>Ctrl+F</kbd>
+  </div>
+
+  <div class="main-content" id="content">
+
+    <!-- ====== 产品简介 ====== -->
+    <h2 id="intro">产品简介</h2>
+    <p>
+      <strong>NoCodeFlow</strong> 是一个桌面应用。你在输入框里用日常语言描述想做的事，AI 会帮你写代码、改文件、整理文档。
+      不需要会编程，只要把需求说清楚就行。
+    </p>
+    <p>
+      它把代码编辑器、文档管理、知识库搜索和 AI 对话集成在同一个界面里，省去了在多个工具之间来回切换的麻烦。
+    </p>
+
+    <div class="ui-mock">
+      <div class="ui-mock-titlebar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span style="margin-left:12px;">NoCodeFlow 主界面示意</span>
+      </div>
+      <div class="ui-mock-body" style="display:flex;gap:12px;min-height:260px;">
+        <!-- Sidebar -->
+        <div class="mock-sidebar">
+          <div class="mock-icon active" title="任务中心">&#9632;</div>
+          <div class="mock-icon" title="工作空间">&#128193;</div>
+          <div class="mock-icon" title="知识库">&#128218;</div>
+          <div class="mock-icon" title="Agent &amp; Skill">&#129302;</div>
+          <div class="mock-icon" title="设置">&#9881;</div>
+        </div>
+        <!-- Content -->
+        <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+          <!-- Top bar -->
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-code);border-radius:6px;font-size:.8rem;color:var(--text-muted);">
+            &#128269; 搜文件、调 Agent、找设置
+            <kbd style="margin-left:auto;">Ctrl+K</kbd>
+          </div>
+          <!-- Hero -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;">
+            <div style="font-size:2rem;">&#10024;</div>
+            <div style="font-size:1.1rem;font-weight:600;">今天想完成什么？</div>
+            <div style="font-size:.8rem;color:var(--text-muted);">告诉 AI 你的想法，让它帮你实现</div>
+            <div style="width:80%;max-width:400px;height:36px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;padding:0 12px;font-size:.8rem;color:var(--text-muted);background:var(--bg);margin-top:8px;">
+              描述你的任务，例如「帮我写一个待办事项 App」...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>它能做什么</h3>
+    <ul>
+      <li><strong>用说话的方式完成工作</strong> &mdash; 在输入框里写「帮我做一个计算器」，AI 会自己写好代码</li>
+      <li><strong>接入多种 AI 服务</strong> &mdash; 支持小米 MiMoCode、Anthropic Claude、OpenAI 等，按需切换</li>
+      <li><strong>管理你的文档资料</strong> &mdash; 把 PDF、Word、Markdown 导入知识库，可以用关键词搜索，也可以向 AI 提问让它从文档里找答案</li>
+      <li><strong>改文件前先问你</strong> &mdash; AI 要修改代码或执行命令时，会弹窗让你确认，并且显示改了哪些内容</li>
+      <li><strong>随时回到之前的状态</strong> &mdash; 系统会自动保存项目快照，改坏了可以一键恢复</li>
+      <li><strong>AI 自动了解你的项目</strong> &mdash; 对话时 AI 会自动读取当前代码、文档和知识库内容，不需要你手动复制粘贴</li>
+    </ul>
+
+    <!-- ====== 安装与启动 ====== -->
+    <h2 id="install">安装与启动</h2>
+
+    <h3>系统要求</h3>
+    <table>
+      <tr><th>项目</th><th>要求</th></tr>
+      <tr><td>操作系统</td><td>Windows 10+、macOS 12+、Ubuntu 20+</td></tr>
+      <tr><td>Node.js</td><td>v18 或更高版本</td></tr>
+      <tr><td>磁盘空间</td><td>至少 500MB 可用空间</td></tr>
+    </table>
+
+    <h3>安装步骤</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-content">
+          <strong>下载安装包</strong>
+          <p>从官方发布页下载对应操作系统的安装程序（Windows 为 <code>.exe</code>，macOS 为 <code>.dmg</code>）。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>运行安装程序</strong>
+          <p>双击安装包，按提示完成安装。Windows 用户可能需要允许防火墙权限。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>启动应用</strong>
+          <p>安装完成后，从桌面快捷方式或开始菜单启动 NoCodeFlow。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="icon">&#8505;</span>
+      <div>首次启动会自动检测环境依赖。如果缺少必要组件，引导流程会协助你安装。</div>
+    </div>
+
+    <!-- ====== 首次引导 ====== -->
+    <h2 id="onboarding">首次引导</h2>
+    <p>首次打开 NoCodeFlow 时，会进入引导向导，共 4 个步骤：</p>
+
+    <div class="ui-mock">
+      <div class="ui-mock-titlebar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span style="margin-left:12px;">引导流程</span>
+      </div>
+      <div class="ui-mock-body" style="text-align:center;padding:24px;">
+        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:20px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--primary);"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--primary);"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+        </div>
+        <div style="font-size:1.2rem;font-weight:700;margin-bottom:8px;">欢迎使用 NoCodeFlow</div>
+        <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:16px;">用日常语言告诉 AI 你想做什么，它会帮你写代码、改文件、整理文档</div>
+        <div style="display:inline-block;padding:8px 24px;background:var(--primary);color:#fff;border-radius:8px;font-size:.9rem;">
+          开始配置 &rarr;
+        </div>
+      </div>
+    </div>
+
+    <h4>步骤说明</h4>
+    <table>
+      <tr><th>步骤</th><th>内容</th><th>说明</th></tr>
+      <tr><td>1. 欢迎</td><td>产品介绍</td><td>点击「开始配置」进入下一步，也可点击「跳过引导」直接进入</td></tr>
+      <tr><td>2. 主题选择</td><td>浅色 / 深色 / 跟随系统</td><td>随时可在设置中更改</td></tr>
+      <tr><td>3. 初始化</td><td>自动安装 CLI 工具</td><td>后台静默执行，等待即可</td></tr>
+      <tr><td>4. API Key</td><td>输入 AI 服务密钥</td><td>密钥加密存储在本地，不会上传</td></tr>
+    </table>
+
+    <div class="callout callout-tip">
+      <span class="icon">&#9989;</span>
+      <div>如果自动安装 CLI 失败，你仍可手动配置 API Key 使用。配置完成后可在「设置 &gt; Agent 配置」中管理多个方案。</div>
+    </div>
+
+    <!-- ====== 任务中心 ====== -->
+    <h2 id="task-center">任务中心</h2>
+    <p>任务中心是 NoCodeFlow 的首页，也是你与 AI 协作的起点。</p>
+
+    <div class="ui-mock">
+      <div class="ui-mock-titlebar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span style="margin-left:12px;">任务中心</span>
+      </div>
+      <div class="ui-mock-body" style="min-height:200px;">
+        <div style="text-align:center;">
+          <div style="font-size:1.5rem;">&#10024;</div>
+          <div style="font-size:1rem;font-weight:600;margin:8px 0;">今天想完成什么？</div>
+          <div style="width:70%;max-width:360px;height:32px;border:1px solid var(--border);border-radius:8px;margin:8px auto;display:flex;align-items:center;padding:0 10px;font-size:.8rem;color:var(--text-muted);background:var(--bg);">
+            描述你的任务...
+          </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+          <span class="tag tag-primary">&#128187; 帮我写代码</span>
+          <span class="tag tag-primary">&#128221; 帮我写文档</span>
+          <span class="tag tag-primary">&#128269; 分析数据</span>
+          <span class="tag tag-primary">&#128295; 修 Bug</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>如何提交任务</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-content">
+          <strong>输入任务描述</strong>
+          <p>在输入框中用自然语言描述你想完成的事情，例如「帮我写一个计算器程序」。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>选择工作目录</strong>
+          <p>如果还没有打开项目文件夹，系统会弹出文件夹选择对话框。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>AI 开始执行</strong>
+          <p>自动跳转到工作空间页面，Agent 面板打开，AI 开始处理你的任务。</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>快捷标签</h3>
+    <p>任务中心底部提供了常用场景的快捷标签，点击即可快速发起对应类型的任务：</p>
+    <ul>
+      <li><strong>帮我写代码</strong> &mdash; 描述功能需求，AI 自动生成代码</li>
+      <li><strong>帮我写文档</strong> &mdash; 描述文档主题，AI 生成 Markdown 文档</li>
+      <li><strong>分析数据</strong> &mdash; 提供数据文件，AI 进行分析</li>
+      <li><strong>修 Bug</strong> &mdash; 描述问题现象，AI 定位并修复</li>
+    </ul>
+
+    <h3>最近项目</h3>
+    <p>页面下方显示最近打开过的项目文件夹，按最后修改时间排序。你可以：</p>
+    <ul>
+      <li>点击项目卡片直接打开该项目</li>
+      <li>悬停后点击删除图标移除不需要的记录</li>
+      <li>点击「+」卡片创建新项目</li>
+    </ul>
+
+    <h3>从模板创建</h3>
+    <p>点击「+」卡片会打开模板选择器，提供常用项目模板快速创建新项目，无需从零开始搭建。</p>
+
+    <!-- ====== 工作空间 ====== -->
+    <h2 id="workspace">工作空间</h2>
+    <p>工作空间是代码编辑和 AI 协作的核心区域，采用三栏布局：</p>
+
+    <div class="ui-mock">
+      <div class="ui-mock-titlebar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span style="margin-left:12px;">工作空间布局</span>
+      </div>
+      <div class="ui-mock-body" style="display:flex;gap:0;min-height:220px;">
+        <!-- File tree -->
+        <div style="width:140px;background:var(--bg-code);border-radius:6px 0 0 6px;padding:8px;font-size:.75rem;color:var(--text-secondary);border-right:1px solid var(--border);">
+          <div style="font-weight:600;margin-bottom:8px;">&#128193; my-project</div>
+          <div style="padding:3px 0;">&#128196; index.ts</div>
+          <div style="padding:3px 0;">&#128196; App.tsx</div>
+          <div style="padding:3px 0;color:var(--primary);font-weight:500;">&#128196; README.md</div>
+          <div style="padding:3px 0;">&#128193; src/</div>
+        </div>
+        <!-- Editor -->
+        <div style="flex:1;padding:8px;font-size:.75rem;border-right:1px solid var(--border);">
+          <div style="display:flex;gap:4px;margin-bottom:8px;">
+            <span class="tag tag-primary" style="font-size:.65rem;">index.ts</span>
+            <span style="font-size:.65rem;background:var(--bg-code);padding:2px 8px;border-radius:999px;">README.md</span>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);line-height:1.8;">
+            <span style="color:var(--primary);">function</span> <span style="color:var(--success);">main</span>() {<br>
+            &nbsp;&nbsp;<span style="color:var(--primary);">console</span>.log(<span style="color:var(--danger);">"Hello"</span>);<br>
+            }
+          </div>
+        </div>
+        <!-- Agent panel -->
+        <div style="width:180px;padding:8px;font-size:.7rem;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-weight:600;font-size:.75rem;">&#128172; Agent</div>
+          <div style="background:var(--bg-code);padding:6px 8px;border-radius:6px;font-size:.7rem;">你好，有什么可以帮你？</div>
+          <div style="background:var(--primary-bg);padding:6px 8px;border-radius:6px;font-size:.7rem;color:var(--primary);align-self:flex-end;">帮我写一个函数</div>
+          <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:6px;">
+            <div style="height:24px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:.65rem;color:var(--text-muted);">
+              输入消息...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>文件树</h3>
+    <p>左侧面板显示项目文件目录，支持：</p>
+    <ul>
+      <li>点击文件在编辑器中打开（支持多标签页）</li>
+      <li>拖拽面板边缘调整宽度</li>
+      <li>点击折叠按钮 <kbd>&#9664;</kbd> 收起/展开文件树</li>
+      <li>自动忽略 <code>node_modules</code>、<code>.git</code>、<code>dist</code> 等目录</li>
+    </ul>
+
+    <h3>编辑器</h3>
+    <p>中央区域是 Monaco Editor，支持：</p>
+    <ul>
+      <li>语法高亮和自动补全</li>
+      <li><kbd>Ctrl+S</kbd> 保存文件</li>
+      <li>多标签页切换，带脏标记提示</li>
+      <li>Markdown 和纯文本文件支持「预览/源码」视图切换</li>
+    </ul>
+
+    <h3>工具栏按钮</h3>
+    <table>
+      <tr><th>按钮</th><th>功能</th></tr>
+      <tr><td><kbd>&larr;</kbd></td><td>返回任务中心</td></tr>
+      <tr><td>&#128194; 打开文件夹</td><td>选择新的项目文件夹</td></tr>
+      <tr><td>&#128196; 保存</td><td>保存当前文件（仅在文件有修改时显示）</td></tr>
+      <tr><td>&#128065; 预览 / &#128196; 源码</td><td>切换 Markdown/文本文件的视图模式</td></tr>
+      <tr><td>&#128172; Agent</td><td>打开/关闭右侧 AI 对话面板</td></tr>
+      <tr><td>&#128336; 快照</td><td>打开/关闭快照历史面板</td></tr>
+      <tr><td>&#128260; 恢复默认布局</td><td>重置所有面板为默认宽度</td></tr>
+    </table>
+
+    <!-- ====== AI Agent 对话 ====== -->
+    <h2 id="agent">AI Agent 对话</h2>
+    <p>
+      <span class="tooltip-trigger">Agent<span class="tooltip-content">AI 助手。你用自然语言告诉它要做什么，它会帮你写代码、改文件、执行命令，遇到关键操作会先问你</span></span>
+      是 NoCodeFlow 的核心交互方式。在工作空间中点击「Agent」按钮打开对话面板。
+    </p>
+
+    <h3>对话界面组成</h3>
+    <ul>
+      <li><strong>状态栏</strong> &mdash; 显示 Agent 当前状态（就绪/运行中/错误/完成）</li>
+      <li><strong>消息区域</strong> &mdash; 显示你和 AI 的对话内容，支持 Markdown 渲染</li>
+      <li><strong>操作记录</strong> &mdash; 显示 Agent 执行过的每一步操作（读文件、写代码、运行命令等）</li>
+      <li><strong>上下文指示</strong> &mdash; 显示 AI 当前参考了哪些文件和知识库内容</li>
+      <li><strong>输入框</strong> &mdash; 输入消息，<kbd>Enter</kbd> 发送</li>
+    </ul>
+
+    <h3>如何与 Agent 对话</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-content">
+          <strong>打开 Agent 面板</strong>
+          <p>在工作空间中点击工具栏的「Agent」按钮，右侧面板展开。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>输入你的需求</strong>
+          <p>在底部输入框中用自然语言描述，例如「帮我在 index.ts 中添加一个 greeting 函数」。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>查看执行过程</strong>
+          <p>Agent 会显示思考状态，然后逐步执行操作，右侧操作记录面板会记下每一步。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>确认权限请求</strong>
+          <p>当 Agent 需要写入文件或执行命令时，会弹出权限确认对话框（见<a href="#permission">权限管理</a>）。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <span class="icon">&#9888;</span>
+      <div>Agent 执行文件写入操作前会弹出确认对话框，显示变更差异（Diff）。请仔细检查后再点击「允许」。</div>
+    </div>
+
+    <h3>消息历史</h3>
+    <p>点击对话区域右下角的 <kbd>&#9776;</kbd> 按钮，可以查看历史消息列表并快速跳转到指定位置。</p>
+
+    <!-- ====== 知识库 ====== -->
+    <h2 id="knowledge">知识库</h2>
+    <p>知识库用于集中管理你的文档资料。导入后可以搜索关键词，也可以用自然语言向 AI 提问，让它从文档中找答案。</p>
+
+    <div class="ui-mock">
+      <div class="ui-mock-titlebar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span style="margin-left:12px;">知识库页面</span>
+      </div>
+      <div class="ui-mock-body" style="min-height:180px;">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <span class="tag tag-primary">&#128196; 文档</span>
+          <span class="tag" style="background:var(--bg-code);color:var(--text-muted);">&#128269; 搜索</span>
+          <span class="tag" style="background:var(--bg-code);color:var(--text-muted);">&#128172; 问答</span>
+          <span style="margin-left:auto;">
+            <span class="tag tag-success" style="cursor:pointer;">&#128228; 导入文件</span>
+          </span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          <div style="background:var(--bg-code);border-radius:6px;padding:12px;text-align:center;">
+            <div style="font-size:1.5rem;">&#128211;</div>
+            <div style="font-size:.8rem;font-weight:500;">项目文档.pdf</div>
+            <div style="font-size:.7rem;color:var(--text-muted);">42 页 &middot; 128 段</div>
+          </div>
+          <div style="background:var(--bg-code);border-radius:6px;padding:12px;text-align:center;">
+            <div style="font-size:1.5rem;">&#128209;</div>
+            <div style="font-size:.8rem;font-weight:500;">API 文档.md</div>
+            <div style="font-size:.7rem;color:var(--text-muted);">18 段</div>
+          </div>
+          <div style="background:var(--bg-code);border-radius:6px;padding:12px;text-align:center;">
+            <div style="font-size:1.5rem;">&#128203;</div>
+            <div style="font-size:.8rem;font-weight:500;">会议记录.docx</div>
+            <div style="font-size:.7rem;color:var(--text-muted);">8 页 &middot; 24 段</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>导入文档</h3>
+    <p>支持以下格式：</p>
+    <table>
+      <tr><th>格式</th><th>扩展名</th><th>说明</th></tr>
+      <tr><td>PDF</td><td><code>.pdf</code></td><td>自动提取文本、目录结构</td></tr>
+      <tr><td>Word</td><td><code>.docx</code></td><td>支持富文本和图片描述</td></tr>
+      <tr><td>Markdown</td><td><code>.md</code></td><td>完整支持 GFM 语法</td></tr>
+      <tr><td>纯文本</td><td><code>.txt</code></td><td>自动分段</td></tr>
+    </table>
+
+    <div class="callout callout-tip">
+      <span class="icon">&#9989;</span>
+      <div>你可以直接将文件拖拽到知识库页面，系统会自动弹出导入对话框。</div>
+    </div>
+
+    <h3>文档搜索</h3>
+    <p>切换到「搜索」标签页，输入关键词即可在所有已导入的文档中进行全文检索。搜索结果按相关度排序，支持结果高亮。</p>
+
+    <h3>跨文档问答</h3>
+    <p>切换到「问答」标签页，你可以：</p>
+    <ul>
+      <li>输入自然语言问题，AI 基于知识库中的文档生成回答</li>
+      <li>点击 <kbd>@</kbd> 按钮引用特定文档，限定问答范围</li>
+      <li>每条回答自动标注引用来源（文档名 + 页码）</li>
+    </ul>
+
+    <!-- ====== 快照与回滚 ====== -->
+    <h2 id="snapshot">快照与回滚</h2>
+    <p>快照功能让你随时保存项目状态，在需要时一键恢复。这对于 AI 修改代码后的安全回退特别有用。</p>
+
+    <h3>打开快照面板</h3>
+    <p>在工作空间工具栏点击「快照」按钮，右侧面板展开，显示快照历史列表。</p>
+
+    <h3>快照面板功能</h3>
+    <ul>
+      <li><strong>操作组</strong> &mdash; Agent 执行的多步操作会被自动分组，方便整组回滚</li>
+      <li><strong>单文件快照</strong> &mdash; 每次文件修改都会记录</li>
+      <li><strong>查看差异</strong> &mdash; 点击快照项查看文件变更的 Diff 视图</li>
+      <li><strong>恢复</strong> &mdash; 选择一个快照点，将文件恢复到该状态</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <span class="icon">&#8505;</span>
+      <div>快照系统优先使用 Git 仓库。如果项目不是 Git 仓库，会使用 <code>.nocodeflow</code> 目录存储快照。</div>
+    </div>
+
+    <!-- ====== 上下文引擎 ====== -->
+    <h2 id="context">上下文引擎</h2>
+    <p>
+      <span class="tooltip-trigger">上下文引擎<span class="tooltip-content">系统自动收集你当前的代码、文档、知识库等内容，一起发给 AI，这样 AI 回答时能参考你的实际项目情况</span></span>
+      是让 AI 更好理解你项目的幕后功臣。它在每次对话时自动运行。
+    </p>
+
+    <h3>上下文来源</h3>
+    <p>AI 对话时会参考以下几类信息：</p>
+    <table>
+      <tr><th>来源</th><th>说明</th></tr>
+      <tr><td>代码</td><td>你当前打开的文件和项目结构</td></tr>
+      <tr><td>文档</td><td>知识库中与问题相关的文档片段</td></tr>
+      <tr><td>知识</td><td>知识库中语义相近的内容</td></tr>
+      <tr><td>偏好</td><td>你在设置中配置的代码风格、写作习惯</td></tr>
+      <tr><td>记忆</td><td>从之前的对话中积累的项目信息</td></tr>
+    </table>
+
+    <h3>上下文面板</h3>
+    <p>在 Agent 面板底部可以看到当前注入了哪些信息，以及占用了多少 AI 处理容量（以 Token 计量，Token 是 AI 处理文本的基本单位，大致 1 个中文字 ≈ 1~2 个 Token）：</p>
+    <ul>
+      <li><strong>容量环</strong> &mdash; 显示已用容量的百分比，超过 90% 会变红</li>
+      <li><strong>来源开关</strong> &mdash; 点击某个来源标签可以临时关闭它，减少注入量</li>
+      <li><strong>置顶/排除</strong> &mdash; 对某条内容置顶（每次对话都带入）或排除（不带入）</li>
+      <li><strong>撤销</strong> &mdash; 支持 5 步撤销，误操作可以恢复</li>
+    </ul>
+
+    <!-- ====== 权限管理 ====== -->
+    <h2 id="permission">权限管理</h2>
+    <p>AI 在操作你的文件或执行命令之前，必须经过你确认。所有修改都会显示具体内容，让你决定是否放行。</p>
+
+    <h3>权限确认对话框</h3>
+    <p>当 Agent 需要执行敏感操作时，会弹出权限确认对话框：</p>
+
+    <div class="ui-mock">
+      <div class="ui-mock-titlebar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span style="margin-left:12px;">权限确认</span>
+      </div>
+      <div class="ui-mock-body" style="max-width:400px;margin:0 auto;">
+        <div style="text-align:center;margin-bottom:12px;">
+          <span style="font-size:1.5rem;">&#128737;</span>
+          <div style="font-weight:600;margin-top:4px;">权限确认</div>
+          <div style="font-size:.8rem;color:var(--text-muted);">AI 请求执行以下操作</div>
+        </div>
+        <div style="background:var(--info-bg);border-left:3px solid var(--info);padding:8px 12px;border-radius:4px;font-size:.8rem;margin-bottom:8px;">
+          &#128161; 添加 greeting 函数到 index.ts
+        </div>
+        <div style="background:var(--bg-code);padding:8px 12px;border-radius:4px;font-size:.75rem;font-family:var(--font-mono);margin-bottom:12px;">
+          &#128196; src/index.ts
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <span style="padding:6px 16px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;">拒绝</span>
+          <span style="padding:6px 16px;background:var(--primary);color:#fff;border-radius:6px;font-size:.85rem;">允许</span>
+        </div>
+        <div style="text-align:center;font-size:.7rem;color:var(--text-muted);margin-top:8px;">Enter 允许 &middot; Esc 拒绝</div>
+      </div>
+    </div>
+
+    <h3>风险等级</h3>
+    <table>
+      <tr><th>等级</th><th>操作类型</th><th>行为</th></tr>
+      <tr>
+        <td><span class="tag tag-success">&#9989; 自动允许</span></td>
+        <td>读取文件、搜索</td>
+        <td>无需确认，自动执行</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-warning">&#9888; 需要确认</span></td>
+        <td>写入文件、编辑</td>
+        <td>弹窗确认，显示变更差异</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-danger">&#128683; 高危操作</span></td>
+        <td>执行命令（Bash）</td>
+        <td>弹窗确认，不可设置自动跳过</td>
+      </tr>
+    </table>
+
+    <div class="callout callout-warn">
+      <span class="icon">&#9888;</span>
+      <div>文件写入操作会显示 <strong>Diff 视图</strong>，让你清楚看到 AI 要修改的内容。文档文件则显示内容预览。</div>
+    </div>
+
+    <h3>批量操作</h3>
+    <p>当有多个权限请求排队时，你可以：</p>
+    <ul>
+      <li>逐一审核并允许/拒绝</li>
+      <li>点击「全部接受」按钮一次性批准所有待处理请求</li>
+      <li>勾选「本次会话不再询问此操作」减少重复确认</li>
+    </ul>
+
+    <!-- ====== 命令面板 ====== -->
+    <h2 id="command-palette">命令面板</h2>
+    <p>
+      命令面板是 NoCodeFlow 的快速操作入口，类似 VS Code 的
+      <span class="tooltip-trigger">Command Palette<span class="tooltip-content">命令面板：通过键盘快速搜索和执行应用内各种操作的浮动窗口</span></span>。
+    </p>
+
+    <h3>打开方式</h3>
+    <p>按 <kbd>Ctrl+K</kbd>（Mac 上为 <kbd>Cmd+K</kbd>），或点击顶部搜索栏。</p>
+
+    <h3>支持的操作</h3>
+    <ul>
+      <li><strong>页面导航</strong> &mdash; 快速跳转到任务中心、工作空间、知识库等页面</li>
+      <li><strong>文件操作</strong> &mdash; 搜索并打开项目中的文件</li>
+      <li><strong>Agent 操作</strong> &mdash; 发送消息给 AI</li>
+      <li><strong>设置</strong> &mdash; 直接跳转到特定设置项</li>
+      <li><strong>快捷键速查</strong> &mdash; 输入 <code>?</code> 查看所有可用快捷键</li>
+    </ul>
+
+    <h3>搜索技巧</h3>
+    <p>命令面板支持三种模糊匹配模式：</p>
+    <table>
+      <tr><th>方式</th><th>示例</th><th>说明</th></tr>
+      <tr><td>直接包含</td><td><code>Agent</code></td><td>匹配标签中包含「Agent」的命令</td></tr>
+      <tr><td>首字母匹配</td><td><code>fs</code></td><td>匹配按空格/连字符拆分后的首字母，如 "file search"</td></tr>
+      <tr><td>逐字符匹配</td><td><code>agst</code></td><td>按顺序匹配标签中的字符，如 "Agent Status"</td></tr>
+    </table>
+    <div class="callout callout-info">
+      <span class="icon">&#8505;</span>
+      <div>模糊匹配对英文标签效果最佳。搜索中文命令建议直接输入关键词（如「知识」「设置」）进行包含匹配。</div>
+    </div>
+
+    <p>支持键盘导航：<kbd>&uarr;</kbd><kbd>&darr;</kbd> 选择，<kbd>Enter</kbd> 执行，<kbd>Esc</kbd> 关闭。</p>
+
+    <!-- ====== 适配器与 Skill ====== -->
+    <h2 id="agent-skill">适配器与 Skill</h2>
+    <p>点击侧边栏的「&#129302;」图标进入 Agent &amp; Skill 管理页面。</p>
+
+    <h3>适配器管理</h3>
+    <p>NoCodeFlow 通过「适配器」连接不同的 AI 服务。你可以根据自己的需要选择：</p>
+    <table>
+      <tr><th>适配器</th><th>能力</th><th>适合场景</th></tr>
+      <tr>
+        <td><strong>MiMoCode</strong>（推荐）</td>
+        <td><span class="tag tag-success">完整</span></td>
+        <td>支持小米 MiMo 系列模型，也能接入 DeepSeek 等第三方服务。AI 可以边回答边操作文件</td>
+      </tr>
+      <tr>
+        <td><strong>Claude Code</strong></td>
+        <td><span class="tag tag-success">完整</span></td>
+        <td>需要 Anthropic Claude 模型的高级能力时使用，需要先安装 Claude CLI 工具</td>
+      </tr>
+      <tr>
+        <td><strong>Claude API</strong></td>
+        <td><span class="tag tag-warning">基础</span></td>
+        <td>直接调用 Anthropic API 进行文字对话，不支持文件操作</td>
+      </tr>
+      <tr>
+        <td><strong>OpenAI 兼容</strong></td>
+        <td><span class="tag" style="background:var(--bg-code);color:var(--text-muted);">实验性</span></td>
+        <td>接入任何兼容 OpenAI 接口的服务</td>
+      </tr>
+    </table>
+
+    <h3>Skill 管理</h3>
+    <p>Skill 是给 Agent 安装的「插件」，能让它学会新本领。在「Skill 管理」标签页中你可以：</p>
+    <ul>
+      <li>浏览和安装社区提供的 Skill</li>
+      <li>启用或禁用已安装的 Skill</li>
+      <li>控制每个 Skill 可以访问哪些资源</li>
+      <li>查看 Skill 的运行记录</li>
+    </ul>
+
+    <!-- ====== 通用设置 ====== -->
+    <h2 id="settings-general">通用设置</h2>
+    <p>点击侧边栏的「&#9881; 设置」图标，进入设置页面。默认显示「通用」标签。</p>
+
+    <h3>主题</h3>
+    <p>三种主题模式可选：</p>
+    <ul>
+      <li><strong>浅色</strong> &mdash; 适合明亮环境</li>
+      <li><strong>深色</strong> &mdash; 适合暗光环境，减少视觉疲劳</li>
+      <li><strong>跟随系统</strong> &mdash; 自动匹配操作系统的深浅色设置</li>
+    </ul>
+
+    <h3>字体大小</h3>
+    <p>通过滑块调节编辑器字体大小，范围 12px ~ 24px。拖动时实时显示数值气泡。</p>
+
+    <h3>编辑器主题</h3>
+    <p>Monaco Editor 的配色方案：浅色（vs）、深色（vs-dark）、高对比（hc-black）。</p>
+
+    <h3>侧边栏位置</h3>
+    <p>可选择将导航侧边栏放在左侧或右侧。</p>
+
+    <h3>实验性功能</h3>
+    <ul>
+      <li><strong>上下文注入指示器</strong> &mdash; 在对话输入框旁显示上下文摘要徽章</li>
+    </ul>
+
+    <h3>响应式布局</h3>
+    <p>NoCodeFlow 会根据窗口宽度自动调整布局：</p>
+    <table>
+      <tr><th>窗口宽度</th><th>行为</th></tr>
+      <tr><td>&ge; 1200px</td><td>完整布局：侧边栏 + 编辑器 + 右侧面板全部显示</td></tr>
+      <tr><td>900 ~ 1199px</td><td>标准布局：侧边栏自动折叠为图标模式</td></tr>
+      <tr><td>600 ~ 899px</td><td>紧凑布局：侧边栏折叠，右侧面板可能隐藏</td></tr>
+      <tr><td>&lt; 600px</td><td>窄屏布局：设置页面以抽屉（Sheet）形式从右侧滑出</td></tr>
+    </table>
+    <p>你可以手动展开已折叠的侧边栏，系统会尊重你的选择，不会在窗口大小变化时强制重新折叠。</p>
+
+    <!-- ====== Agent 配置 ====== -->
+    <h2 id="settings-agent">Agent 配置</h2>
+    <p>在「Agent 配置」标签页中管理 AI 服务方案。你可以配置多个方案并快速切换。</p>
+
+    <h3>添加方案</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-content">
+          <strong>选择 Agent 引擎</strong>
+          <p>选择 MiMoCode（推荐）或 Claude Code、Claude API、OpenAI 兼容。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>配置提供商</strong>
+          <p>MiMoCode 支持小米官方（推荐，原生模型）和第三方自定义（DeepSeek、OpenAI 等）两种模式。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>填写 API Key</strong>
+          <p>输入对应的 API 密钥。密钥会加密存储在本地。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-content">
+          <strong>高级设置（可选）</strong>
+          <p>配置 Agent 运行模式、安全拦截、高精度模式、Temperature 等参数。</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>小米官方模型</h3>
+    <table>
+      <tr><th>模型</th><th>说明</th></tr>
+      <tr><td><code>mimo-v2.5-pro</code></td><td>推荐，多模态支持，能力最强</td></tr>
+      <tr><td><code>mimo-v2.5</code></td><td>标准版，性价比高</td></tr>
+    </table>
+
+    <h3>高级设置说明</h3>
+    <table>
+      <tr><th>选项</th><th>说明</th></tr>
+      <tr>
+        <td><strong>Agent 运行模式</strong></td>
+        <td>
+          <span class="tag tag-primary">执行模式</span> AI 可以直接修改你的代码文件；
+          <span class="tag" style="background:var(--bg-code);color:var(--text-muted);">只读规划</span> AI 只分析和出方案，不动任何文件。适合先让 AI 想清楚再动手
+        </td>
+      </tr>
+      <tr>
+        <td><strong>文件安全拦截 (HITL)</strong></td>
+        <td>开启后，写入文件前会弹窗确认</td>
+      </tr>
+      <tr>
+        <td><strong>高精度模式</strong></td>
+        <td>AI 会同时生成多个回答，挑最好的一个返回。效果更好，但消耗的额度约为普通模式的 4~5 倍</td>
+      </tr>
+      <tr>
+        <td><strong>Temperature</strong></td>
+        <td>控制 AI 回答的「创意程度」。调低（接近 0）回答更严谨、重复；调高（接近 2）回答更多样、但可能不稳定。一般保持默认值 1 即可</td>
+      </tr>
+    </table>
+
+    <!-- ====== 权限设置 ====== -->
+    <h2 id="settings-permission">权限设置</h2>
+    <p>在「权限管理」标签页中配置 Agent 的操作权限规则。</p>
+    <ul>
+      <li>查看当前的权限规则列表</li>
+      <li>添加自定义允许/拒绝规则</li>
+      <li>管理路径白名单（Agent 可访问的目录）</li>
+      <li>查看被拦截的操作历史</li>
+    </ul>
+
+    <!-- ====== 记忆管理 ====== -->
+    <h2 id="settings-memory">记忆管理</h2>
+    <p>
+      <span class="tooltip-trigger">记忆系统<span class="tooltip-content">AI 会记住你之前对话中提到的项目信息和偏好，下次对话时自动参考</span></span>
+      让 AI 能够记住你的项目特点和使用偏好。
+    </p>
+
+    <h3>记忆类型</h3>
+    <table>
+      <tr><th>类型</th><th>说明</th><th>示例</th></tr>
+      <tr><td>项目知识</td><td>项目的技术栈、目录结构、约定</td><td>「本项目使用 React + TypeScript」</td></tr>
+      <tr><td>用户偏好</td><td>你的代码风格、输出格式偏好</td><td>「使用 4 空格缩进」</td></tr>
+      <tr><td>会话记忆</td><td>对话中积累的上下文</td><td>「上次讨论了登录功能的设计」</td></tr>
+      <tr><td>Agent 学习</td><td>成功/失败模式</td><td>「用户的项目不支持 ESM」</td></tr>
+    </table>
+
+    <p>在设置页面可以查看、搜索、编辑和删除记忆条目。</p>
+
+    <!-- ====== 快捷键速查 ====== -->
+    <h2 id="shortcuts">快捷键速查</h2>
+
+    <table>
+      <tr><th>快捷键</th><th>功能</th><th>适用场景</th></tr>
+      <tr><td><kbd>Ctrl+K</kbd></td><td>打开命令面板</td><td>全局</td></tr>
+      <tr><td><kbd>Ctrl+1</kbd></td><td>切换到任务中心</td><td>全局</td></tr>
+      <tr><td><kbd>Ctrl+2</kbd></td><td>切换到工作空间</td><td>全局</td></tr>
+      <tr><td><kbd>Ctrl+3</kbd></td><td>切换到知识库</td><td>全局</td></tr>
+      <tr><td><kbd>Ctrl+4</kbd></td><td>切换到 Agent &amp; Skill</td><td>全局</td></tr>
+      <tr><td><kbd>Ctrl+S</kbd></td><td>保存当前文件</td><td>工作空间</td></tr>
+      <tr><td><kbd>Enter</kbd></td><td>发送消息 / 允许权限</td><td>Agent 对话 / 权限弹窗</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>关闭面板 / 拒绝权限</td><td>弹窗 / 面板</td></tr>
+      <tr><td><kbd>&uarr;</kbd><kbd>&darr;</kbd></td><td>导航列表项</td><td>命令面板</td></tr>
+    </table>
+
+    <div class="callout callout-info">
+      <span class="icon">&#8505;</span>
+      <div>Mac 用户将 <kbd>Ctrl</kbd> 替换为 <kbd>Cmd</kbd>。在命令面板中输入 <code>?</code> 可查看完整的快捷键列表。</div>
+    </div>
+
+    <!-- ====== 常见问题 ====== -->
+    <h2 id="faq">常见问题</h2>
+
+    <div class="collapsible" onclick="this.classList.toggle('open')">
+      <div class="collapsible-header">
+        Agent 提示「未连接」怎么办？
+        <span class="arrow">&#9654;</span>
+      </div>
+      <div class="collapsible-body">
+        <p>请检查以下几点：</p>
+        <ol>
+          <li>确认已在「设置 &gt; Agent 配置」中添加了至少一个方案并设为激活状态</li>
+          <li>确认 API Key 已正确填写（密钥会显示为 <code>sk-***xxxx</code> 格式）</li>
+          <li>确认网络连接正常（特别是使用第三方 API 时）</li>
+          <li>如果使用 Claude Code 引擎，确认已全局安装 CLI：<code>npm install -g @anthropic-ai/claude-code</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="collapsible" onclick="this.classList.toggle('open')">
+      <div class="collapsible-header">
+        如何切换不同的 AI 模型？
+        <span class="arrow">&#9654;</span>
+      </div>
+      <div class="collapsible-body">
+        <p>在「设置 &gt; Agent 配置」中，点击方案卡片上的「激活」按钮即可切换。切换后需要重启 Agent 生效。</p>
+        <p>你可以为不同场景配置多个方案，例如日常使用 MiMoCode，需要精确输出时切换到 Claude API。</p>
+      </div>
+    </div>
+
+    <div class="collapsible" onclick="this.classList.toggle('open')">
+      <div class="collapsible-header">
+        快照和 Git 有什么区别？
+        <span class="arrow">&#9654;</span>
+      </div>
+      <div class="collapsible-body">
+        <p>快照系统是 NoCodeFlow 内置的备份机制，特点：</p>
+        <ul>
+          <li>自动在 Agent 操作前创建快照</li>
+          <li>无需手动 commit</li>
+          <li>支持非 Git 项目（使用 <code>.nocodeflow</code> 目录）</li>
+          <li>操作组级别的整组回滚</li>
+        </ul>
+        <p>如果你的项目已有 Git，快照系统会优先使用 Git 来存储。</p>
+      </div>
+    </div>
+
+    <div class="collapsible" onclick="this.classList.toggle('open')">
+      <div class="collapsible-header">
+        知识库支持多大的文件？
+        <span class="arrow">&#9654;</span>
+      </div>
+      <div class="collapsible-body">
+        <p>导入时系统会自动将文档分段存储（Chunking），大文件会被拆分为多个段落以便检索。导入过程中会显示进度条，你可以随时了解处理状态。</p>
+        <p>支持的格式包括 PDF、Word（.docx）、Markdown 和纯文本。具体大小限制取决于系统可用内存。</p>
+      </div>
+    </div>
+
+    <div class="collapsible" onclick="this.classList.toggle('open')">
+      <div class="collapsible-header">
+        Agent 写入的文件可以撤销吗？
+        <span class="arrow">&#9654;</span>
+      </div>
+      <div class="collapsible-body">
+        <p>可以。有三种方式：</p>
+        <ol>
+          <li><strong>快照回滚</strong> &mdash; 打开快照面板，选择操作前的快照点恢复</li>
+          <li><strong>权限拒绝</strong> &mdash; 在权限确认弹窗中点击「拒绝」</li>
+          <li><strong>手动撤销</strong> &mdash; 在编辑器中使用 <kbd>Ctrl+Z</kbd></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="collapsible" onclick="this.classList.toggle('open')">
+      <div class="collapsible-header">
+        上下文引擎占用太多 Token 怎么办？
+        <span class="arrow">&#9654;</span>
+      </div>
+      <div class="collapsible-body">
+        <p>你可以通过以下方式减少 AI 的处理负担：</p>
+        <ul>
+          <li>在上下文面板中排除不需要的来源（比如暂时关闭「记忆」）</li>
+          <li>置顶真正重要的内容，让 AI 优先关注</li>
+          <li>系统会自动压缩和截断过长的内容，一般不需要手动干预</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ====== 术语表 ====== -->
+    <h2 id="glossary">术语表</h2>
+    <table>
+      <tr><th>术语</th><th>说明</th></tr>
+      <tr>
+        <td>Agent</td>
+        <td>AI 助手。你用自然语言描述需求，它帮你执行代码修改、文件操作等任务</td>
+      </tr>
+      <tr>
+        <td>Adapter</td>
+        <td>连接不同 AI 服务（如小米 MiMo、Claude）的接口层</td>
+      </tr>
+      <tr>
+        <td>HITL</td>
+        <td>Human-In-The-Loop 的缩写。指 AI 做关键操作前必须经过人工确认的机制</td>
+      </tr>
+      <tr>
+        <td>Snapshot</td>
+        <td>项目文件在某一时刻的完整备份，用于回滚和恢复</td>
+      </tr>
+      <tr>
+        <td>FTS5</td>
+        <td>知识库内部使用的搜索技术，支持中英文混合检索</td>
+      </tr>
+      <tr>
+        <td>Context Engine</td>
+        <td>上下文引擎。自动收集你当前的代码、文档等内容一起发给 AI</td>
+      </tr>
+      <tr>
+        <td>Skill</td>
+        <td>插件。给 Agent 添加新能力，比如接入新的 AI 服务或执行特定任务</td>
+      </tr>
+      <tr>
+        <td>Timeline</td>
+        <td>Agent 执行操作的逐步记录（读文件、改代码、跑命令等）</td>
+      </tr>
+    </table>
+
+    <!-- Footer -->
+    <div style="text-align:center;margin-top:60px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-muted);font-size:.8rem;">
+      NoCodeFlow 用户使用手册 &middot; 基于项目源码自动生成<br>
+      如有疑问，请通过「设置 &gt; 反馈与建议」提交反馈
+    </div>
+
+  </div><!-- .main-content -->
+</div><!-- .main -->
+
+<!-- Back to Top -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">&#8593;</button>
+
+<!-- ==================== JavaScript ==================== -->
+<script>
+(function() {
+  'use strict';
+
+  // ===== Sidebar active state on scroll =====
+  var sections = document.querySelectorAll('h2[id], h3[id]');
+  var navLinks = document.querySelectorAll('#nav a');
+
+  function updateActiveNav() {
+    var current = '';
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].getBoundingClientRect().top < 120) {
+        current = sections[i].id;
+      }
+    }
+    for (var j = 0; j < navLinks.length; j++) {
+      navLinks[j].classList.toggle('active', navLinks[j].getAttribute('href') === '#' + current);
+    }
+  }
+
+  // ===== Back to top button =====
+  var backBtn = document.getElementById('backTop');
+  function updateBackBtn() {
+    backBtn.classList.toggle('show', window.scrollY > 400);
+  }
+
+  // ===== Search with highlight =====
+  var searchInput = document.getElementById('searchInput');
+  var searchCount = document.getElementById('searchCount');
+  var contentEl = document.getElementById('content');
+
+  // Cache original text nodes to avoid full innerHTML restore on each search
+  var savedNodes = [];
+  function cacheOriginalNodes() {
+    savedNodes = [];
+    var walker = document.createTreeWalker(contentEl, NodeFilter.SHOW_TEXT, null, false);
+    while (walker.nextNode()) {
+      var node = walker.currentNode;
+      var parent = node.parentElement;
+      if (!parent || parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE') continue;
+      if (parent.classList && parent.classList.contains('search-bar')) continue;
+      if (parent.tagName === 'MARK') continue; // skip already-marked
+      savedNodes.push({ node: node, text: node.textContent });
+    }
+  }
+  // Cache after initial render
+  setTimeout(cacheOriginalNodes, 0);
+
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // Remove all existing <mark> highlights by unwrapping them
+  function clearHighlights() {
+    var marks = contentEl.querySelectorAll('mark');
+    for (var i = 0; i < marks.length; i++) {
+      var mark = marks[i];
+      var parent = mark.parentNode;
+      while (mark.firstChild) {
+        parent.insertBefore(mark.firstChild, mark);
+      }
+      parent.removeChild(mark);
+      parent.normalize();
+    }
+  }
+
+  function doSearch(query) {
+    // Remove previous highlights
+    clearHighlights();
+
+    if (!query || query.length < 2) {
+      searchCount.textContent = '';
+      // Re-cache after clearing (text nodes may have been merged by normalize)
+      cacheOriginalNodes();
+      return;
+    }
+
+    var escaped = escapeRegExp(query);
+    var regex = new RegExp('(' + escaped + ')', 'gi');
+    var count = 0;
+
+    // Re-cache nodes since clearHighlights changed the DOM
+    cacheOriginalNodes();
+
+    for (var i = savedNodes.length - 1; i >= 0; i--) {
+      var entry = savedNodes[i];
+      var text = entry.text;
+      if (!regex.test(text)) continue;
+      regex.lastIndex = 0;
+
+      var matches = text.match(regex);
+      if (!matches) continue;
+      count += matches.length;
+
+      // Build highlighted fragment
+      var frag = document.createDocumentFragment();
+      var parts = text.split(regex);
+      for (var p = 0; p < parts.length; p++) {
+        if (parts[p] === '') continue;
+        if (parts[p].toLowerCase() === query.toLowerCase()) {
+          var m = document.createElement('mark');
+          m.textContent = parts[p];
+          frag.appendChild(m);
+        } else {
+          frag.appendChild(document.createTextNode(parts[p]));
+        }
+      }
+      entry.node.parentNode.replaceChild(frag, entry.node);
+    }
+
+    searchCount.textContent = count > 0 ? count + ' 个匹配' : '无匹配';
+
+    // Scroll to first match
+    var first = contentEl.querySelector('mark');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  var searchTimer;
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function() { doSearch(searchInput.value.trim()); }, 300);
+  });
+
+  // Ctrl+F to focus search
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+      if (document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+      }
+    }
+    if (e.key === 'Escape' && document.activeElement === searchInput) {
+      searchInput.value = '';
+      doSearch('');
+      searchInput.blur();
+    }
+  });
+
+  // ===== Scroll events =====
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        updateActiveNav();
+        updateBackBtn();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // Initial
+  updateActiveNav();
+  updateBackBtn();
+
+  // Close mobile sidebar on nav click
+  for (var k = 0; k < navLinks.length; k++) {
+    navLinks[k].addEventListener('click', function() {
+      document.getElementById('sidebar').classList.remove('open');
+    });
+  }
+})();
+</script>
+</body>
+</html>

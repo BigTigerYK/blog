@@ -1,12 +1,13 @@
 .vh-toc {
   &-title {
-    margin: 0 0 0.88rem;
+    margin: 0 0 0.75rem;
     padding: 0 0 0.66rem;
     border-bottom: 1px solid var(--vh-border-color);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--vh-font-color);
-    letter-spacing: -0.02em;
+    color: var(--vh-toc-title);
+    text-transform: uppercase;
+    letter-spacing: 1px;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -54,25 +55,25 @@
     display: block;
     padding: 0.36rem 0.66rem 0.36rem 1rem;
     font-size: 0.82rem;
-    color: var(--vh-text-secondary);
+    color: var(--vh-toc-text);
     text-decoration: none;
     border-left: 2px solid transparent;
     margin-left: -1px;
     transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
     border-radius: 0 4px 4px 0;
-    line-height: 1.5;
+    line-height: 1.7;
     position: relative;
 
     &:hover {
-      color: var(--vh-font-color);
+      color: var(--vh-toc-hover);
       background-color: var(--vh-font-6);
     }
 
     &.active {
-      color: var(--vh-accent-color);
-      border-left-color: var(--vh-accent-color);
-      background-color: rgba(139, 92, 246, 0.08);
-      font-weight: 500;
+      color: var(--vh-toc-active);
+      font-weight: 600;
+      border-left-color: var(--vh-toc-accent);
+      background-color: rgba(96, 165, 250, 0.08);
 
       // 激活状态的光点
       &::before {
@@ -83,9 +84,9 @@
         transform: translateY(-50%);
         width: 8px;
         height: 8px;
-        background-color: var(--vh-accent-color);
+        background-color: var(--vh-toc-accent);
         border-radius: 50%;
-        box-shadow: 0 0 8px var(--vh-glow-purple);
+        box-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
       }
     }
   }

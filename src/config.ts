@@ -12,7 +12,7 @@ export default {
   // 作者头像
   Avatar: '/assets/images/toux.webp',
   // 网站座右铭
-  Motto: '',
+  Motto: '记录学习，分享技术',
   // Cover 网站缩略图
   Cover: '/assets/images/banner/072c12ec85d2d3b5.webp',
   // 网站侧边栏公告 (不填写即不开启)
@@ -35,11 +35,11 @@ export default {
   Theme: {
     "--vh-main-color": "#8B5CF6",
     "--vh-font-color": "#E0E6ED",
-    "--vh-bg-primary": "#0A0B10",
+    "--vh-bg-primary": "#0F172A",
     "--vh-bg-card": "#161B22",
     "--vh-text-secondary": "#8B949E",
     "--vh-accent-color": "#8B5CF6",
-    "--vh-golden-width": "700px",
+    "--vh-golden-width": "800px",
     "--vh-aside-width": "280px",
     "--vh-main-radius": "0.88rem",
     "--vh-main-max-width": "1458px",
@@ -73,6 +73,20 @@ export default {
     AliPay: '',
     WeChat: ''
   },
+  // 评论系统 Giscus 配置（不填不开启）
+  Giscus: {
+    enable: true,
+    repo: 'BigTigerYK/blog',
+    repoId: 'R_kgDOSsHguQ',
+    category: 'Announcements',
+    categoryId: 'DIC_kwDOSsHguc4C-NUk',
+    mapping: 'pathname',
+    strict: '0',
+    reactionsEnabled: '1',
+    emitMetadata: '0',
+    inputPosition: 'bottom',
+    lang: 'zh-CN',
+  },
   // 访问网页 自动推送到搜索引擎
   SeoPush: {
     enable: false,
@@ -85,6 +99,8 @@ export default {
     server: '',
     siteId: ''
   },
+  // 音乐播放器 API（不填不开启）
+  vhMusicApi: '',
   // DNS预解析地址
   DNSOptimization: [
     'https://cn.cravatar.com',

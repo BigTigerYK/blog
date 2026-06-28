@@ -21,7 +21,7 @@ main.main {
     &>.main-inner-content {
       flex: 1 1 0%;
       box-sizing: border-box;
-      padding: 0.88rem 0.66rem;
+      padding: 0.88rem min(1.5rem, 8%);
       width: 100%;
       min-width: 0;
       height: max-content;
@@ -38,7 +38,7 @@ main.main {
         // 黄金阅读宽度居中
         max-width: var(--vh-golden-width);
         margin: 0 auto;
-        padding: 0.88rem 1.2rem;
+        padding: 0.88rem min(1.5rem, 8%);
       }
 
       &>.main-toc {

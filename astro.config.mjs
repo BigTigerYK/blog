@@ -15,26 +15,12 @@ import { remarkNote, addClassNames } from './src/plugins/markdown.custom'
 import { lineHighlightTransformer } from './src/plugins/shiki-line-highlight'
 // Markdown 配置================
 import SITE_INFO from './src/config';
-import swup from '@swup/astro';
 // https://astro.build/config
 export default defineConfig({
 	site: SITE_INFO.Site,
 	base: '/',
 	build: { assets: 'vh_static' },
-	integrations: [swup({
-		theme: false,
-		animationClass: "vh-animation-",
-		containers: [".main-inner>.main-inner-content", '.vh-header>.main'],
-		smoothScrolling: true,
-		progress: true,
-		cache: true,
-		preload: true,
-		accessibility: true,
-		updateHead: true,
-		updateBodyClass: false,
-		globalInstance: true
-	}),
-	Compress({ Image: false, Action: { Passed: async () => true } }),
+	integrations: [Compress({ Image: false, Action: { Passed: async () => true } }),
 	sitemap({
 		// 处理末尾带 / 的 url
 		serialize: (item) => ({ ...item, url: item.url.endsWith('/') ? item.url.slice(0, -1) : item.url })

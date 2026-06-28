@@ -10,9 +10,9 @@ const ARTICLE_COVER: string = await getCover(post.data.cover);
 import "./ArticleCard.less";
 ---
 
-<article class={`vh-article-item vh-animation vh-animation-init vh-article-link${post.data.top ? " active" : ""}`}>
+<article class={`vh-article-item vh-animation vh-animation-init vh-article-link${post.data.top ? " active" : ""}${post.data.gray ? " gray" : ""}`}>
 	<span class="vh-timeline-dot" aria-hidden="true"></span>
-	<section class="vh-article-banner"><img src="/assets/images/lazy-loading.webp" data-vh-lz-src={ARTICLE_COVER} alt={post.data.title} /></section>
+	<section class="vh-article-banner"><img src={ARTICLE_COVER} alt={post.data.title} loading="lazy" /></section>
 	<header>
 		<div class="vh-article-meta"><a class={`vh-article-cat vh-cat-${post.data.categories}`} href={`/categories/${post.data.categories}`}>{post.data.categories}</a><time>{fmtTime(post.data.date)}</time></div>
 		<h2 class="title"><a class="vh-ellipsis" href={`/article/${post.data.id}`}>{post.data.title}</a></h2>

@@ -1,17 +1,21 @@
-// 扩展 Window 接口以包含 swup 属性
-declare global {
-  interface Window {
-    swup: { hooks: { on: (event: string, handler: EventHandler) => void } };
-  }
-}
 type EventHandler = (event: Event) => void;
 
-//  进入页面时触发
+// Store references for remove-before-add to prevent listener accumulation
+let currentInHandler: EventHandler | null = null;
+let currentOutHandler: EventHandler | null = null;
+
+// 进入页面时触发（首次加载 + 每次 ViewTransition 导航完成后）
 const inRouter = (handler: EventHandler) => {
-  const setup = () => window.swup.hooks.on("page:view", handler);
-  window.swup ? setup() : document.addEventListener("swup:enable", setup);
+  if (currentInHandler) document.removeEventListener("astro:page-load", currentInHandler);
+  currentInHandler = handler;
+  document.addEventListener("astro:page-load", handler);
 };
-// 离开当前页面时触发
-const outRouter = (handler: EventHandler) => window.swup ? window.swup.hooks.on("visit:start", handler) : document.addEventListener("swup:enable", () => outRouter(handler));
+
+// 离开当前页面时触发（ViewTransition swap 之前）
+const outRouter = (handler: EventHandler) => {
+  if (currentOutHandler) document.removeEventListener("astro:before-swap", currentOutHandler);
+  currentOutHandler = handler;
+  document.addEventListener("astro:before-swap", handler);
+};
 
 export { inRouter, outRouter };

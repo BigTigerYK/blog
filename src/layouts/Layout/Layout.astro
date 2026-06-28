@@ -22,6 +22,8 @@ import BackTop from "@/components/BackTop/BackTop.astro";
 import MobileSidebar from "@/components/MobileSidebar/MobileSidebar.astro";
 // TOC 组件
 import Toc from "@/components/Toc/Toc.astro";
+// 初始化脚本组件
+import InitScript from "@/components/InitScript/InitScript.astro";
 // A Modern CSS Reset
 import "@/styles/Reset.less";
 // Layout 样式
@@ -43,6 +45,7 @@ import "./Layout.less";
 		/>
 	</Head>
 	<body>
+		<InitScript />
 		<MobileSidebar />
 		<Header activeNav={activeNav} />
 		<!-- 阅读进度条（仅文章页） -->
@@ -50,10 +53,10 @@ import "./Layout.less";
 		<main class="main">
 			{HomeBanner.enable && <MainHeader />}
 			<section class={`main-inner${articleLayout ? ' main-inner-article' : ''}`} style={`padding-top:${HomeBanner.enable ? "0.88rem" : "calc(66px + 0.68rem)"}`}>
+				<Aside />
 				<section class="main-inner-content">
 					<slot />
 				</section>
-				<Aside />
 				{articleLayout && headings && headings.length > 0 && (
 					<aside class="main-toc">
 						<Toc headings={headings} />
@@ -84,7 +87,7 @@ import "./Layout.less";
 					</svg>
 				</button>
 				<div class="vh-toc-drawer-overlay" id="tocDrawerOverlay"></div>
-				<nav class="vh-toc-drawer" id="tocDrawer">
+				<nav class="vh-toc-drawer" id="tocDrawer" role="dialog" aria-modal="true" aria-label="文章目录">
 					<div class="vh-toc-drawer-header">
 						<h4>目录</h4>
 						<button id="tocDrawerClose" aria-label="关闭目录">
@@ -101,11 +104,6 @@ import "./Layout.less";
 				</nav>
 			</>
 		)}
-		<script>
-			import InitFn from "@/scripts/Init";
-			// 全局初始化
-			InitFn();
-		</script>
 		<!-- TOC 抽屉交互 -->
 		{articleLayout && headings && headings.length > 0 && (
 			<script>
@@ -132,13 +130,7 @@ import "./Layout.less";
 		<script is:inline>
 			(function(){
 				var bp = document.createElement('script');
-				var curProtocol = window.location.protocol.split(':')[0];
-				if (curProtocol === 'https'){
-					bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-				}
-				else{
-					bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-				}
+				bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
 				var s = document.getElementsByTagName("script")[0];
 				s.parentNode.insertBefore(bp, s);
 			})();

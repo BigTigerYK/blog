@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url); // 当前文件的绝对路�
 const __dirname = path.dirname(__filename); // 当前文件所在的目录
 
 // 支持的图片扩展名
-const SUPPORTED_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp']);
+const SUPPORTED_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.ico']);
 
 /**
  * 获取目录中的所有图片文件
@@ -60,7 +60,10 @@ async function* createImageIterator(dir: string) {
 const targetDir = path.resolve(__dirname, '../../public/assets/images/banner/'); // 目标目录
 const fileIter = createImageIterator(targetDir);
 export default async (filename: string | null | undefined) => {
-  if (filename) return filename;
+  if (filename) {
+    if (filename.startsWith('http') || filename.startsWith('/')) return filename;
+    return `/assets/images/${filename}`;
+  }
   const { value } = await fileIter.next();
   return `/assets/images/banner/${value}`
 }

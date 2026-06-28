@@ -4,10 +4,15 @@ date: 2026-05-31
 categories: "工具推荐"
 tags: ["AI", "NoCodeFlow", "效率工具", "桌面应用"]
 id: "nocodeflow-intro"
-cover: "banner/64f0ee83dae88182.webp"
+cover: "banner/nocodeflow-logo.png"
+gray: true
 ---
 
 最近在用一款叫 **NoCodeFlow** 的 AI 桌面助手，体验下来觉得挺值得分享。简单说就是：打开它，用自然语言告诉 AI 你想做什么，它就会在你的电脑上直接帮你完成——写代码、改文档、分析资料、整理文件，不需要懂技术，会打字就行。
+
+:::note{type="warning"}
+本文基于 NoCodeFlow **内测初代版本**撰写，界面和功能可能与最新版有差异。如需使用，请关注本博客获取最新版本，体验更稳定、功能更完善。
+:::
 
 ::btn[立即下载 NoCodeFlow]{link="https://pan.vma.cc/pan/down.php/56661c3ad6ba0871e784b58d94f9dab8.exe"}
 

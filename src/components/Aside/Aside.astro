@@ -32,7 +32,7 @@ import "./Aside.less";
 	{
 		AsideShow.WebSitesShow && (
 			<section class="vh-aside-item user">
-				<img class="vh-aside-avatar" src="/assets/images/lazy-loading.webp" data-vh-lz-src={Avatar} alt={Author} />
+				<img class="vh-aside-avatar" src={Avatar} alt={Author} />
 				<span class="vh-aside-auther">{Author}</span>
 				<p class="vh-aside-motto">{Motto}</p>
 				<section class="vh-aside-links">
@@ -170,7 +170,7 @@ import "./Aside.less";
 			GoogleAds.ad_Client && GoogleAds.asideAD_Slot && (
 				<section class="vh-aside-item ad">
 					<h3>广而告之</h3>
-					<GoogleAd className="vh-aside-ad" slotID={GoogleAds.asideAD_Slot} />
+					<GoogleAd className="vh-aside-ad" slotID={GoogleAds.asideAD_Slot} adClient={GoogleAds.ad_Client} />
 				</section>
 			)
 		}

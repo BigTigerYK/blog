@@ -11,6 +11,10 @@ export default () => {
       i.setAttribute("src", '/assets/images/lazy-loading.webp');
     }
   });
-  if (lazyLoadStatus) return lazyLoadStatus.update();
+  // 销毁旧实例再重建，确保 SPA 页面切换后 IntersectionObserver 重新绑定新 DOM
+  if (lazyLoadStatus) {
+    lazyLoadStatus.destroy();
+    lazyLoadStatus = null;
+  }
   lazyLoadStatus = new LazyLoad({ elements_selector: "img:not(.view-image-container)", threshold: 0, data_src: "vh-lz-src" });
 }

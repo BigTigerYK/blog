@@ -1,5 +1,12 @@
 ---
-const { slotID, className } = Astro.props;
+const { slotID, className, adClient } = Astro.props;
 ---
 
-<div class={`vh-ad ${className}`} set:html={slotID} />
+<div class={`vh-ad ${className}`}>
+  <ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client={adClient}
+    data-ad-slot={slotID}
+    data-ad-format="auto"
+    data-full-width-responsive="true" />
+</div>

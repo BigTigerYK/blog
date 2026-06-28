@@ -41,6 +41,8 @@ import SmoothScroll from "@/scripts/Smoothscroll";
 import { tocInit, tocDestroy } from "@/scripts/Toc";
 // 专注模式
 import ZenModeInit from "@/scripts/ZenMode";
+// 评论系统
+import CommentInit, { commentDestroy } from "@/scripts/Comment";
 
 // ============================================================
 
@@ -57,15 +59,7 @@ const loadDeferred = () => {
   HanAnalyticsInit();
 };
 
-const indexInit = async (only: boolean = true) => {
-  // 初始化网站运行时间
-  only && initWebSiteTime();
-  // 初始化BackTop组件
-  only && BackTopInitFn();
-  // SmoothScroll 滚动优化
-  only && SmoothScroll();
-  // 图片灯箱
-  only && ViewImage();
+const indexInit = () => {
   // 初始化文章代码块
   codeInit();
   // 图片懒加载初始化
@@ -86,18 +80,30 @@ const indexInit = async (only: boolean = true) => {
   TypeWriteInit();
   // 泡泡🫧效果
   PaoPaoInit();
-  // 预加载搜索数据
-  only && searchFn("");
   // 初始化搜索功能
   vhSearchInit();
   // 移动端侧边栏初始化
   initMobileSidebar();
   // TOC 动态高亮
   tocInit();
-  // 专注模式
-  only && ZenModeInit();
-  // 延迟加载：首次滚动或交互后加载广告、评论、统计、SEO推送
-  if (only) {
+  // 评论系统
+  CommentInit();
+  // SPA 路由切换时立即加载延迟模块
+  loadDeferred();
+};
+
+export default () => {
+  // 一次性初始化（BackTop、SmoothScroll 等只执行一次）
+  let onceDone = false;
+  const initOnce = () => {
+    if (onceDone) return;
+    onceDone = true;
+    initWebSiteTime();
+    BackTopInitFn();
+    SmoothScroll();
+    ViewImage();
+    searchFn("");
+    ZenModeInit();
     const triggerLoad = () => {
       loadDeferred();
       window.removeEventListener('scroll', triggerLoad);
@@ -107,19 +113,16 @@ const indexInit = async (only: boolean = true) => {
     window.addEventListener('scroll', triggerLoad, { once: true, passive: true });
     window.addEventListener('click', triggerLoad, { once: true });
     window.addEventListener('keydown', triggerLoad, { once: true });
-    // 兜底：8秒后无论如何加载
     setTimeout(loadDeferred, 8000);
-  } else {
-    // SPA 路由切换时立即加载
-    loadDeferred();
-  }
-};
-
-export default () => {
+  };
   // 首次初始化
+  initOnce();
   indexInit();
-  // 进入页面时触发
-  inRouter(() => indexInit(false));
+  // 进入页面时触发（ViewTransition 导航完成后）
+  inRouter(() => {
+    initOnce();
+    indexInit();
+  });
   // 离开当前页面时触发
   outRouter(() => {
     // 重置延迟加载状态
@@ -132,6 +135,8 @@ export default () => {
     MusicList.length = 0;
     // 销毁 TOC observer
     tocDestroy();
+    // 销毁评论系统定时器
+    commentDestroy();
   });
   console.log("%c🌻 程序：Astro | 主题：vhAstro-Theme | 作者：Han | Github：https://github.com/uxiaohan/vhAstro-Theme 🌻", "color:#fff; background: linear-gradient(270deg, #18d7d3, #68b7dd, #8695e6, #986fee); padding: 8px 15px; border-radius: 8px");
   console.log("%c\u521D\u59CB\u5316\u5B8C\u6BD5.", "color: #ffffff; background: #000; padding:5px");

@@ -63,10 +63,11 @@
     width: 100%;
     max-width: 28.88rem;
     height: max-content;
-    color: var(--vh-white-color);
+    color: var(--vh-font-66);
     text-align: center;
     font-size: 0.88rem;
     line-height: 1.5rem;
+    animation: breathe 3s ease-in-out infinite;
 
     &::before {
       content: "";
@@ -93,6 +94,11 @@
         opacity: 0;
       }
     }
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
   }
 }
 

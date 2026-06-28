@@ -65,9 +65,13 @@ const searchInputChange = (v: any) => {
   fnTimer = setTimeout(() => searchFn(value), 266);
 }
 
-// 初始化搜索框
+// 初始化搜索框（SPA 路由切换时重新绑定到新 DOM 元素）
+let boundSearchDOM: Element | null = null;
+let searchKeydownBound = false;
 const vhSearchInit = () => {
   const searchDOM: any = document.querySelector(".vh-header>.main>nav>span.search-btn");
+  if (searchDOM === boundSearchDOM) return;
+  boundSearchDOM = searchDOM;
   const searchMainDOM: any = document.querySelector(".vh-header>.main>.vh-search>main");
   const searchListDOM: any = document.querySelector(".vh-header>.main>.vh-search");
   const searchInput: any = searchListDOM?.querySelector(".search-input>input");
@@ -83,25 +87,33 @@ const vhSearchInit = () => {
   // 搜索框初内容变化
   searchInput?.addEventListener("input", searchInputChange);
 
-  // Command+K / Ctrl+K 全局快捷键
-  let selectedIndex = -1;
-  document.addEventListener("keydown", (e: KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-      e.preventDefault();
-      const isActive = searchListDOM?.classList.contains("active");
-      if (isActive) {
-        removeActive();
-      } else {
-        addActive();
+  // Command+K / Ctrl+K 全局快捷键 + Escape（只绑定一次，使用实时 DOM 查询）
+  if (!searchKeydownBound) {
+    searchKeydownBound = true;
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+      const listDOM: any = document.querySelector(".vh-header>.main>.vh-search");
+      const toggleActive = () => {
+        if (listDOM?.classList.contains("active")) {
+          setTimeout(() => listDOM.classList.remove("active"));
+        } else {
+          setTimeout(() => {
+            listDOM.classList.add("active");
+            listDOM?.querySelector(".search-input>input")?.focus();
+          });
+        }
+      };
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        toggleActive();
       }
-    }
-    // Escape 关闭
-    if (e.key === "Escape") {
-      removeActive();
-    }
-  });
+      if (e.key === "Escape") {
+        setTimeout(() => listDOM?.classList.remove("active"));
+      }
+    });
+  }
 
   // 搜索结果键盘导航
+  let selectedIndex = -1;
   searchListDOM?.addEventListener("keydown", (e: KeyboardEvent) => {
     const items = searchListDOM.querySelectorAll('.vh-search-item');
     if (!items.length) return;

@@ -92,11 +92,12 @@
 
       // 其下面的 a 标签样式
       a {
-        color: var(--vh-font-56);
+        color: var(--vh-font-88);
         box-shadow: inset 0 -.12rem var(--vh-main-color);
         transition: box-shadow .2s ease-in-out, color .2s ease-in-out;
 
         &:hover {
+          color: var(--vh-main-color);
           box-shadow: inset 0 -1.5rem var(--vh-main-color-28);
         }
       }
@@ -324,7 +325,7 @@
 
         &:hover {
           background-color: var(--vh-font-16);
-          border-color: var(--vh-font-56);
+          border-color: var(--vh-font-muted);
           &::before {
             left: 0;
             width: 100%;

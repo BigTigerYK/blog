@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoCodeFlow — AI 认知工作台</title>
+    <style>
+        :root {
+            --primary: hsl(227, 100%, 70%);
+            --primary-hover: hsl(227, 100%, 60%);
+            --background: #0B0D14;
+            --card: #1A1D27;
+            --card-hover: #232735;
+            --foreground: #E4E6F0;
+            --muted: #8B90A8;
+            --muted-foreground: #8B90A8;
+            --border: #2D3148;
+            --success: hsl(142, 71%, 55%);
+            --warning: hsl(48, 96%, 53%);
+            --info: hsl(189, 83%, 53%);
+            --purple: hsl(255, 90%, 76%);
+            --pink: hsl(340, 89%, 71%);
+            --orange: hsl(25, 95%, 61%);
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, hsl(227, 100%, 70%, 0.15) 0%, transparent 60%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: hsl(227, 100%, 70%, 0.1);
+            border: 1px solid hsl(227, 100%, 70%, 0.3);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .hero-badge::before {
+            content: '✦';
+            font-size: 16px;
+        }
+
+        h1 {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 2.5vw, 24px);
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto 48px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px hsl(227, 100%, 70%, 0.3);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--foreground);
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--card);
+            border-color: var(--muted);
+        }
+
+        .hero-features {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 64px;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .hero-feature-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-label {
+            display: inline-block;
+            background: hsl(227, 100%, 70%, 0.1);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Pain Points Section */
+        .pain-points {
+            background: linear-gradient(180deg, var(--background) 0%, hsl(230, 25%, 10%) 100%);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
+        .comparison-column {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .comparison-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .comparison-header.pain {
+            color: hsl(0, 80%, 65%);
+        }
+
+        .comparison-header.solution {
+            color: var(--success);
+        }
+
+        .comparison-item {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .comparison-item:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+        }
+
+        .comparison-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .comparison-icon.pain {
+            background: hsl(0, 80%, 65%, 0.1);
+            color: hsl(0, 80%, 65%);
+        }
+
+        .comparison-icon.solution {
+            background: hsl(142, 71%, 55%, 0.1);
+            color: var(--success);
+        }
+
+        .comparison-text h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .comparison-text p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--purple));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon.blue {
+            background: hsl(227, 100%, 70%, 0.1);
+            color: var(--primary);
+        }
+
+        .feature-icon.purple {
+            background: hsl(255, 90%, 76%, 0.1);
+            color: var(--purple);
+        }
+
+        .feature-icon.green {
+            background: hsl(142, 71%, 55%, 0.1);
+            color: var(--success);
+        }
+
+        .feature-icon.orange {
+            background: hsl(25, 95%, 61%, 0.1);
+            color: var(--orange);
+        }
+
+        .feature-icon.pink {
+            background: hsl(340, 89%, 71%, 0.1);
+            color: var(--pink);
+        }
+
+        .feature-icon.info {
+            background: hsl(189, 83%, 53%, 0.1);
+            color: var(--info);
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 15px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* Use Cases Section */
+        .use-cases {
+            background: linear-gradient(180deg, hsl(230, 25%, 10%) 0%, var(--background) 100%);
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .use-case-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .use-case-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+        }
+
+        .use-case-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .use-case-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .use-case-card p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* Trust Section */
+        .trust-section {
+            text-align: center;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .trust-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .trust-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: hsl(227, 100%, 70%, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .trust-item h4 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .trust-item p {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 120px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, hsl(227, 100%, 70%, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section h2 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            color: var(--muted);
+            margin-bottom: 40px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            section {
+                padding: 60px 0;
+            }
+
+            .hero {
+                padding: 60px 24px;
+            }
+
+            .hero-features {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles */
+        a:focus-visible,
+        button:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: #fff;
+            padding: 8px 16px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">跳过导航</a>
+
+    <!-- Hero Section -->
+    <header class="hero" role="banner">
+        <div class="hero-content">
+            <div class="hero-badge" aria-hidden="true">AI 认知工作台</div>
+            <h1>用自然语言，<span>完成一切工作</span></h1>
+            <p class="hero-subtitle">
+                从代码开发到论文写作，从文献分析到知识管理——一个工作台，解决所有问题
+            </p>
+            <div class="hero-cta">
+                <a href="#download" class="btn-primary" role="button">
+                    立即体验
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#features" class="btn-secondary" role="button">
+                    了解更多
+                </a>
+            </div>
+            <div class="hero-features" aria-label="核心特性">
+                <div class="hero-feature">
+                    <span class="hero-feature-icon" aria-hidden="true">✓</span>
+                    <span>本地优先，数据不离开你的设备</span>
+                </div>
+                <div class="hero-feature">
+                    <span class="hero-feature-icon" aria-hidden="true">✓</span>
+                    <span>多模型自由切换，不绑定供应商</span>
+                </div>
+                <div class="hero-feature">
+                    <span class="hero-feature-icon" aria-hidden="true">✓</span>
+                    <span>跨会话记忆，AI 持续学习</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main">
+        <!-- Pain Points Section -->
+        <section class="pain-points" aria-labelledby="pain-points-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">为什么选择 NoCodeFlow</span>
+                    <h2 class="section-title" id="pain-points-title">告别工具碎片化时代</h2>
+                    <p class="section-desc">一个工作台取代五个工具，让工作回归专注</p>
+                </div>
+                <div class="comparison-grid">
+                    <div class="comparison-column">
+                        <div class="comparison-header pain">
+                            <span aria-hidden="true">✕</span>
+                            <span>传统方式的痛点</span>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-icon pain" aria-hidden="true">😵</div>
+                            <div class="comparison-text">
+                                <h4>工具太多，来回切换</h4>
+                                <p>写代码用一个工具，写文档用另一个，查资料又要开第三个，效率被切割得支离破碎</p>
+                            </div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-icon pain" aria-hidden="true">😰</div>
+                            <div class="comparison-text">
+                                <h4>数据安全，提心吊胆</h4>
+                                <p>代码和文档上传到云端处理，担心数据泄露，却无可奈何</p>
+                            </div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-icon pain" aria-hidden="true">😤</div>
+                            <div class="comparison-text">
+                                <h4>AI 不记得之前聊过什么</h4>
+                                <p>每次对话都要重新解释项目背景，AI 像失忆一样，无法积累经验</p>
+                            </div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-icon pain" aria-hidden="true">😱</div>
+                            <div class="comparison-text">
+                                <h4>AI 修改代码，提心吊胆</h4>
+                                <p>AI 一键改了几十个文件，改错了也不知道怎么恢复</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comparison-column">
+                        <div class="comparison-header solution">
+                            <span aria-hidden="true">✓</span>
+                            <span>NoCodeFlow 的解决方案</span>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-icon solution" aria-hidden="true">✨</div>
+                            <div class="comparison-text">
+                                <h4>一个工作台，搞定一切</h4>
+                                <p>代码编辑、AI 对话、文档处理、知识管理，全在一个界面完成</p>
+                            </div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-icon solution" aria-hidden="true">🔒</div>
+                            <div class="comparison-text">
+                                <h4>数据只在你手里</h4>
+                                <p>所有数据存储在本地设备，代码和对话直连 AI 提供商，我们不碰你的数据</p>
+                            </div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-icon solution" aria-hidden="true">🧠</div>
+                            <div class="comparison-text">
+                                <h4>AI 越用越懂你</h4>
+                                <p>跨会话记忆系统，AI 记住你的项目背景、编码习惯、写作风格</p>
+                            </div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-icon solution" aria-hidden="true">🛡️</div>
+                            <div class="comparison-text">
+                                <h4>修改前自动备份，一键恢复</h4>
+                                <p>每次 AI 修改文件前自动创建快照，不满意随时回滚，零风险</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" aria-labelledby="features-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">核心能力</span>
+                    <h2 class="section-title" id="features-title">为高效工作而生</h2>
+                    <p class="section-desc">七大核心子系统，构建从感知到行动的完整闭环</p>
+                </div>
+                <div class="features-grid">
+                    <article class="feature-card fade-in">
+                        <div class="feature-icon blue" aria-hidden="true">🤖</div>
+                        <h3>智能 AI 代理</h3>
+                        <p>支持多种 AI 模型自由切换，小米 MiMoCode 为主力引擎，同时兼容 Claude、OpenAI 等，不绑定单一供应商</p>
+                    </article>
+                    <article class="feature-card fade-in">
+                        <div class="feature-icon purple" aria-hidden="true">📄</div>
+                        <h3>文档智能处理</h3>
+                        <p>一键导入 PDF、Word、Markdown 文档，自动提取结构、识别引用、构建索引，支持跨文档问答</p>
+                    </article>
+                    <article class="feature-card fade-in">
+                        <div class="feature-icon green" aria-hidden="true">🔍</div>
+                        <h3>全文检索与知识图谱</h3>
+                        <p>高性能全文搜索引擎，智能同义词扩展，可视化知识图谱展示文档间的关联关系</p>
+                    </article>
+                    <article class="feature-card fade-in">
+                        <div class="feature-icon orange" aria-hidden="true">🧩</div>
+                        <h3>统一上下文引擎</h3>
+                        <p>自动感知当前文件、项目结构、相关文档，为 AI 提供最精准的上下文，让回答更贴合你的项目</p>
+                    </article>
+                    <article class="feature-card fade-in">
+                        <div class="feature-icon pink" aria-hidden="true">💾</div>
+                        <h3>持久记忆系统</h3>
+                        <p>AI 跨会话积累项目知识，记住技术栈、编码规范、业务逻辑，新对话不再从零开始</p>
+                    </article>
+                    <article class="feature-card fade-in">
+                        <div class="feature-icon info" aria-hidden="true">🛡️</div>
+                        <h3>安全防护体系</h3>
+                        <p>四层安全机制保护你的数据：进程隔离、权限沙箱、命令分级、操作确认，AI 在受控环境中运行</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases Section -->
+        <section class="use-cases" aria-labelledby="use-cases-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">适用场景</span>
+                    <h2 class="section-title" id="use-cases-title">无论什么工作，都能胜任</h2>
+                    <p class="section-desc">从开发者到研究者，满足多样化的工作需求</p>
+                </div>
+                <div class="use-cases-grid">
+                    <article class="use-case-card fade-in">
+                        <div class="use-case-icon" aria-hidden="true">💻</div>
+                        <h3>软件开发</h3>
+                        <p>代码生成、调试、重构、文件编辑，AI 先分析再执行，每次修改都有快照备份</p>
+                    </article>
+                    <article class="use-case-card fade-in">
+                        <div class="use-case-icon" aria-hidden="true">📝</div>
+                        <h3>论文写作</h3>
+                        <p>文献综述、学术创作、格式排版，AI 理解你的研究背景，提供精准的写作建议</p>
+                    </article>
+                    <article class="use-case-card fade-in">
+                        <div class="use-case-icon" aria-hidden="true">📚</div>
+                        <h3>文献分析</h3>
+                        <p>跨文档检索、引用追踪、要点提取，构建个人知识库，让文献不再散落各处</p>
+                    </article>
+                    <article class="use-case-card fade-in">
+                        <div class="use-case-icon" aria-hidden="true">📊</div>
+                        <h3>数据分析</h3>
+                        <p>数据处理、可视化、统计分析，用自然语言描述需求，AI 帮你完成分析工作</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust Section -->
+        <section class="trust-section" aria-labelledby="trust-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">值得信赖</span>
+                    <h2 class="section-title" id="trust-title">安全与透明</h2>
+                </div>
+                <div class="trust-grid">
+                    <div class="trust-item fade-in">
+                        <div class="trust-icon" aria-hidden="true">🔐</div>
+                        <h4>数据本地化</h4>
+                        <p>所有数据存储在你的设备，不上传至任何服务器</p>
+                    </div>
+                    <div class="trust-item fade-in">
+                        <div class="trust-icon" aria-hidden="true">🔑</div>
+                        <h4>自有密钥</h4>
+                        <p>使用你自己的 API Key 直连 AI 提供商，我们不接触你的数据</p>
+                    </div>
+                    <div class="trust-item fade-in">
+                        <div class="trust-icon" aria-hidden="true">📜</div>
+                        <h4>开源透明</h4>
+                        <p>MIT 开源协议，代码完全公开可审计</p>
+                    </div>
+                    <div class="trust-item fade-in">
+                        <div class="trust-icon" aria-hidden="true">🛡️</div>
+                        <h4>四层安全</h4>
+                        <p>进程隔离、权限沙箱、命令分级、操作确认，纵深防御</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section" aria-labelledby="cta-title">
+            <div class="cta-content">
+                <h2 id="cta-title">准备好提升工作效率了吗？</h2>
+                <p>下载 NoCodeFlow，开启 AI 驱动的智能工作体验</p>
+                <div class="hero-cta">
+                    <a href="#download" class="btn-primary" role="button">
+                        免费下载
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                        </svg>
+                    </a>
+                    <a href="#docs" class="btn-secondary" role="button">
+                        查看文档
+                    </a>
+                </div>
+                <p style="margin-top: 24px; font-size: 14px; color: var(--muted);">
+                    支持 Windows 和 Linux · macOS 版本即将推出
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer role="contentinfo">
+        <p>
+            NoCodeFlow — AI 认知工作台 ·
+            <a href="#github">GitHub</a> ·
+            <a href="#docs">文档</a> ·
+            <a href="mailto:support@nocodeflow.dev">联系我们</a>
+        </p>
+        <p style="margin-top: 8px;">
+            © 2026 NoCodeFlow. 基于 MIT 协议开源
+        </p>
+    </footer>
+
+    <!-- Intersection Observer for fade-in animations -->
+    <script>
+        // Minimal JS for scroll animations - only if needed
+        if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        } else {
+            // If reduced motion is preferred, show all elements immediately
+            document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+        }
+    </script>
+</body>
+</html>

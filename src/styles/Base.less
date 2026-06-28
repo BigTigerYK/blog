@@ -18,7 +18,7 @@
 	// 字体颜色
 	--vh-font-88: rgb(from var(--vh-font-color) r g b / 88%);
 	--vh-font-66: rgb(from var(--vh-font-color) r g b / 66%);
-	--vh-font-56: rgb(from var(--vh-font-color) r g b / 56%);
+	--vh-font-muted: rgb(from var(--vh-font-color) r g b / 62%);
 	--vh-font-28: rgb(from var(--vh-font-color) r g b / 28%);
 	--vh-font-16: rgb(from var(--vh-font-color) r g b / 16%);
 	--vh-font-6: rgb(from var(--vh-font-color) r g b / 6%);
@@ -27,6 +27,12 @@
 	--vh-text-body: var(--vh-font-color); // 二级文字：正文常规色 (#E0E6ED)
 	--vh-text-muted: #94A3B8;         // 三级文字：弱化/辅助说明 (如日期、阅读数等)
 	--vh-text-subtle: #475569;        // 四级文字：极弱提示或禁用状态
+	// TOC 目录栏专用色
+	--vh-toc-title: #64748B;          // 目录标题色
+	--vh-toc-text: #CBD5E1;           // 目录项文字色
+	--vh-toc-hover: #F1F5F9;          // 目录项 hover 色
+	--vh-toc-active: #F8FAFC;         // 目录激活项色
+	--vh-toc-accent: #60A5FA;         // 目录激活强调色
 
 	// 主题色
 	--vh-main-color-88: rgb(from var(--vh-main-color) r g b / 88%);
@@ -66,11 +72,11 @@
 	text-decoration: none;
 	// 消除边框
 	outline: none;
+}
 
-	// 隐藏滚动条
-	::-webkit-scrollbar {
-		display: none;
-	}
+// 隐藏滚动条（顶层伪元素选择器）
+::-webkit-scrollbar {
+	display: none;
 }
 
 // 设置文本选中颜色
@@ -93,6 +99,7 @@ html {
 		flex-direction: column;
 		width: 100vw;
 		height: max-content;
+		background-color: var(--vh-bg-primary);
 		color: var(--vh-font-color);
 		font-family: 'HarmonyOS Sans SC', serif;
 		font-weight: 400;
@@ -106,9 +113,8 @@ html {
 			top: 0;
 			width: 100vw;
 			height: 100vh;
-			// background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(0 0 0 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
 			background: var(--vh-bg-primary) url('/assets/images/bg.png');
-			opacity: 0.188;
+			opacity: 0.1;
 			z-index: -1;
 		}
 
@@ -128,6 +134,17 @@ code {
 
 a {
 	color: var(--vh-font-color);
+}
+
+// 焦点样式 - 无障碍访问
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+	outline: 2px solid var(--vh-accent-color);
+	outline-offset: 2px;
 }
 
 img {
@@ -230,27 +247,6 @@ img[data-vh-lz-src] {
 	animation: 400ms vh-init-show;
 	animation-fill-mode: forwards;
 	transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-// swup 动画效果
-html.swup-enabled,
-html.is-changing {
-	.vh-animation {
-		&.vh-animation-init {
-			transform: translateY(0);
-			opacity: 1;
-			animation: none;
-		}
-	}
-}
-
-html.is-animating {
-	.vh-animation {
-		&.vh-animation-init {
-			transform: translateY(15px);
-			opacity: 0;
-		}
-	}
 }
 
 // 占位加载

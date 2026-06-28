@@ -4,10 +4,15 @@ date: 2026-05-31
 categories: "教程"
 tags: ["AI", "NoCodeFlow", "教程", "效率工具"]
 id: "nocodeflow-guide"
-cover: "banner/745978cb4b533956.webp"
+cover: "banner/nocodeflow-logo.png"
+gray: true
 ---
 
 这篇教程帮你快速上手 NoCodeFlow，从首次启动到核心功能，一步步来。
+
+:::note{type="warning"}
+本教程基于 NoCodeFlow **内测初代版本**编写，界面和功能细节可能与最新版存在差异。建议关注本博客获取最新版本，以获得更好的使用体验。
+:::
 
 ## 首次启动
 
